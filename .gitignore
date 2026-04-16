@@ -1,0 +1,47 @@
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+
+Backend/__pycache__/
+Backend/*.pyc
+Backend/db.sqlite3
+
+# Entorno y secretos
+**/.env
+!**/.env_modelo
+
+# Config local de editores/IDE
+**/.vscode/
+**/.editorconfig
+
+# Artefactos de herramientas frontend
+**/.angular/
+**/package-lock.json
+
+# Caches y temporales (Python)
+**/__pycache__/
+**/*.py[cod]
+**/.mypy_cache/
+**/.ruff_cache/
+**/.pytest_cache/
+
+# Caches y temporales (Node/Angular)
+**/node_modules/
+**/.npm/
+**/.pnpm-store/
+**/.yarn/cache/
+**/.cache/
+**/.angular/cache/
+
+# Caches y temporales generales
+tmp/
+temp/
+**/*.tmp
+**/*.swp
+**/*.swo
+**/*.log
+
+# Recomendados IDE/SO
+**/.idea/
+.DS_Store
+Thumbs.db
