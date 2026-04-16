@@ -1,0 +1,4 @@
+django==6.0.4
+djangorestframework==3.17.1
+mysqlclient==2.2.8
+python-dotenv==1.2.2
