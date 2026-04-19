@@ -37,11 +37,21 @@ python manage.py runserver
 
 ## Uso básico
 
-- Registrarse como voluntario u organización.
-- Buscar oportunidades de voluntariado.
+### Usuarios voluntarios
+
+- Registrarse en la plataforma.
+- Buscar oportunidades disponibles.
+- Filtrar por ubicación o actividad.
+- Postularse a voluntariados.
+- Recibir mensajes de organizaciones.
+
+### Organizaciones
+
+- Registrarse como organización.
 - Publicar oportunidades.
-- Postularse a actividades.
-- Contactar usuarios mediante mensajería.
+- Editar publicaciones.
+- Revisar postulaciones.
+- Contactar voluntarios.
 
 ---
 
@@ -49,14 +59,36 @@ python manage.py runserver
 
 ### Funcionales
 
-- Registro de usuarios.
-- Búsqueda con filtros.
-- Publicación de oportunidades.
-- Postulación a voluntariados.
-- Mensajería interna.
+- RF1: Registro de usuarios como voluntarios u organizaciones.
+- RF2: Búsqueda de oportunidades con filtros.
+- RF3: Publicación, edición y eliminación de oportunidades.
+- RF4: Postulación a voluntariados activos.
+- RF5: Mensajería entre organizaciones y voluntarios.
+
 
 ### No funcionales
 
-- Buen rendimiento.
-- Seguridad con JWT.
-- Diseño responsive.
+- RNF1: Buen rendimiento y navegación fluida.
+- RNF2: Seguridad mediante autenticación JWT.
+- RNF3: Control de acceso por roles.
+- RNF4: Diseño responsive para dispositivos móviles.
+- RNF5: Uso intuitivo y accesible.
+
+## Endpoints base
+
+- Frontend: http://localhost:4200
+- Backend: http://localhost:8000
+- API Healthcheck: http://localhost:8000/api/health/
+- API Oportunidades: http://localhost:8000/api/oportunidades/
+
+---
+## Estado del proyecto
+
+En desarrollo.
+
+---
+
+## Equipo
+
+PLIGAT Devs  
+DevCordoba
