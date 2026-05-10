@@ -16,22 +16,25 @@ Propuesta de valor: mostrar oportunidades cercanas y facilitar la participación
 
 git clone https://github.com/devcordoba/mano-a-mano.git
 
-2. Ejecutar proyecto
+2. Frontend
 
-docker compose up --build
-
-3. Frontend
-
+```bash
 cd Frontend
 npm install
 ng serve
+```
 
-4. Backend
+3. Backend
 
+```bash
 cd Backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+copy .env_modelo .env
 python manage.py migrate
 python manage.py runserver
+```
 
 ---
 

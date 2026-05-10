@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Hero } from './hero/hero';
-import { Footer } from './footer/footer';
+import { MainNavbarComponent } from './shared/components/main-navbar/main-navbar.component';
+import { SiteFooterComponent } from './shared/components/site-footer/site-footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Hero, Footer],
+  imports: [RouterOutlet, MainNavbarComponent, SiteFooterComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'mano-a-mano';
+  protected readonly title = 'Mano a mano - Red de voluntarios';
 }
