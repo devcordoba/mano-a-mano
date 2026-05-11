@@ -11,7 +11,6 @@ import { ManoApiService } from '../../services/mano-api.service';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-/** Formulario en el constructor + signals; detección de cambios por defecto (nivel principiante). */
 export class HomePage {
   protected readonly enviando = signal(false);
   protected readonly mensaje = signal<string | null>(null);

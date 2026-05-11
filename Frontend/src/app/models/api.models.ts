@@ -14,18 +14,6 @@ export interface UsuarioAlta {
   last_name?: string;
 }
 
-export interface PerfilUsuario {
-  id: number;
-  user: number;
-  username?: string;
-  rol: 'VOL' | 'ORG';
-  telefono: string;
-  intereses_causas: string;
-  disponibilidad_resumen: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Organizacion {
   id: number;
   propietario: number;
