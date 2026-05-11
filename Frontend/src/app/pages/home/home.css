@@ -1,0 +1,37 @@
+.mam-hero {
+  background: radial-gradient(circle at 10% 20%, var(--mam-lime-soft) 0%, transparent 45%),
+    radial-gradient(circle at 90% 10%, var(--mam-lavender) 0%, transparent 40%),
+    var(--mam-bg-pink);
+  border-bottom: 2px solid var(--mam-black);
+}
+
+.mam-accent-label {
+  color: var(--mam-magenta);
+  letter-spacing: 0.12em;
+}
+
+.mam-hero-title {
+  color: var(--mam-charcoal);
+}
+
+.mam-hero-lead {
+  color: var(--mam-charcoal);
+  opacity: 0.92;
+}
+
+.mam-hero-card {
+  background: var(--mam-white);
+  border: 2px solid var(--mam-black);
+}
+
+.mam-btn-primary {
+  background-color: var(--mam-magenta);
+  border-color: var(--mam-black);
+  color: var(--mam-white);
+  font-weight: 600;
+}
+
+.mam-btn-primary:hover {
+  background-color: var(--mam-orange);
+  color: var(--mam-black);
+}
