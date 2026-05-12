@@ -22,8 +22,21 @@ export const routes: Routes = [
   },
   {
     path: 'panel',
-    title: 'Panel - Mano a Mano',
-    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.DashboardPage),
+    children: [
+      {
+        path: 'admin',
+        title: 'Panel Admin - Mano a Mano',
+        loadComponent: () =>
+          import('./pages/panel-admin/panel-admin').then((m) => m.PanelAdminPage),
+      },
+      {
+        path: 'usuario',
+        title: 'Mi Panel - Mano a Mano',
+        loadComponent: () =>
+          import('./pages/panel-usuario/panel-usuario').then((m) => m.PanelUsuarioPage),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'usuario' },
+    ],
   },
   { path: '**', redirectTo: 'inicio' },
 ];

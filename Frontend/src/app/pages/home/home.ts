@@ -65,7 +65,7 @@ export class HomePage {
         next: () => {
           this.enviando.set(false);
           this.mensaje.set('Usuario creado. Ahora podés iniciar sesión.');
-          this.registroForm.reset();
+          this.registroForm.reset();  
         },
         error: (err) => {
           this.enviando.set(false);

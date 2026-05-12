@@ -5,6 +5,7 @@ Frontend/.angular/
 Backend/__pycache__/
 Backend/*.pyc
 Backend/db.sqlite3
+Backend/.venv/
 
 # Entorno y secretos
 **/.env

@@ -16,22 +16,25 @@ Propuesta de valor: mostrar oportunidades cercanas y facilitar la participación
 
 git clone https://github.com/devcordoba/mano-a-mano.git
 
-2. Ejecutar proyecto
+2. Frontend
 
-docker compose up --build
-
-3. Frontend
-
+```bash
 cd Frontend
 npm install
 ng serve
+```
 
-4. Backend
+3. Backend
 
+```bash
 cd Backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+copy .env_modelo .env
 python manage.py migrate
 python manage.py runserver
+```
 
 ---
 
@@ -69,7 +72,7 @@ python manage.py runserver
 ### No funcionales
 
 - RNF1: Buen rendimiento y navegación fluida.
-- RNF2: Seguridad mediante autenticación JWT.
+- RNF2: Seguridad mediante autenticación con **token opaco de Django REST Framework** (`Authorization: Token …`), no JWT.
 - RNF3: Control de acceso por roles.
 - RNF4: Diseño responsive para dispositivos móviles.
 - RNF5: Uso intuitivo y accesible.
