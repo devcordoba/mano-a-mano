@@ -18,6 +18,7 @@ Opciones:
 --down                Destruir servicios
 --up-interface        Levantar y mostrar solo IP local asociada
 --help                Obtener Ayuda
+-h                    Igual que --help
 EOF
 }
 
@@ -62,8 +63,11 @@ run_build() {
 }
 
 mysql_data_volume_name() {
-  # Nombre real del volumen: <nombre_proyecto_compose>_mysql_data (proyecto = carpeta por defecto)
-  echo "$(basename "$PROJECT_DIR")_mysql_data"
+  local base="${COMPOSE_PROJECT_NAME:-}"
+  if [[ -z "$base" ]]; then
+    base="$(basename "$PROJECT_DIR")"
+  fi
+  echo "${base}_mysql_data"
 }
 
 run_build_fresh_db() {
@@ -123,14 +127,14 @@ show_menu() {
   echo "Docker Mano a Mano."
   echo
   echo "Opciones:"
-  echo "[1] --build         Levantar con build"
-  echo "[1b] --build-fresh-db  Build y DB MySQL nueva (borra datos locales MySQL)"
-  echo "[2] --up            Levantar sin build"
-  echo "[3] --list          Revisar contenedores"
-  echo "[4] --stop          Detener servicios"
-  echo "[5] --down          Destruir servicios"
-  echo "[6] --up-interface  Levantar y mostrar interfaces"
-  echo "[7] --help          Ver ayuda"
+  echo "[1] --build              Levantar con build"
+  echo "[1b] --build-fresh-db     Build y DB MySQL nueva (borra datos locales MySQL)"
+  echo "[2] --up                 Levantar sin build"
+  echo "[3] --list               Revisar contenedores"
+  echo "[4] --stop               Detener servicios"
+  echo "[5] --down               Destruir servicios"
+  echo "[6] --up-interface       Levantar y mostrar interfaces"
+  echo "[7] --help               Ver ayuda"
   echo "[0] Salir"
   echo
 }
