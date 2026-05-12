@@ -1,0 +1,619 @@
+<div class="container py-4">
+  <header class="mb-0">
+    <h1 class="h2 fw-bold mam-page-title mb-4">
+      @if (auth.isLoggedIn()) {
+        Bienvenido, {{ auth.displayLabel() }}
+      } @else {
+        Bienvenido, visitante
+      }
+    </h1>
+  </header>
+
+  @if (cargando()) {
+    <div class="alert mam-alert-info" role="status">Cargando datos…</div>
+  }
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  }
+
+  @if (auth.isLoggedIn()) {
+    @if (auth.isStaff()) {
+      <div class="card mam-form-card border-2 mb-4 p-3">
+        <p class="small text-muted mb-2">
+          Contás como <strong>staff</strong>: podés ver la actividad de otro usuario (solo lectura en esta vista).
+        </p>
+        <div class="row g-2 align-items-end">
+          <div class="col-md-6 col-lg-5">
+            <label class="form-label small mb-0">Usuario activo (vista)</label>
+            <select
+              class="form-select form-select-sm"
+              [value]="staffUsuarioSelectValue()"
+              (change)="onStaffUsuarioSelectChange($event)"
+            >
+              <option value="">-</option>
+              @for (u of usuarios(); track u.id) {
+                <option [value]="u.id">{{ u.username }} ({{ u.id }})</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+    }
+
+    <ul class="nav nav-pills flex-wrap gap-2 mb-4 mam-pills">
+      <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#tab-feed">Oportunidades</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#tab-post">Mis postulaciones</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#tab-pubs" role="tab">Mis publicaciones</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="tab"
+          href="#tab-postulantes"
+          id="dashboard-tab-postulantes-trigger"
+          role="tab"
+          >Postulantes</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="tab"
+          href="#tab-msg"
+          id="dashboard-tab-msg-trigger"
+          role="tab"
+          >Mensajes</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="tab"
+          href="#tab-mis-orgs"
+          id="dashboard-tab-mis-orgs-trigger"
+          role="tab"
+          >Mis organizaciones</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="tab"
+          href="#tab-publicar"
+          id="dashboard-tab-publicar-trigger"
+          role="tab"
+          >Publicar oferta</a>
+      </li>
+    </ul>
+  }
+
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="tab-feed" role="tabpanel">
+      <h2 class="h5 fw-semibold mb-2">Oportunidades</h2>
+      @if (!oportunidadesFeedVisibles().length) {
+        <p class="text-muted">No hay oportunidades activas o aún no hay datos.</p>
+      }
+      @for (o of oportunidadesFeedVisibles(); track o.id) {
+        <article class="card mam-feed-card mb-3 border-0 shadow-sm overflow-hidden">
+          <div class="row g-0">
+            <div class="col-md-3 mam-feed-strip d-flex flex-column justify-content-center text-center p-3 text-white">
+              <span class="small text-uppercase opacity-75">{{ o.causa }}</span>
+              <strong class="fs-6">{{ o.organizacion_nombre ?? 'Organización' }}</strong>
+              <span class="badge mam-badge-soft mt-2 align-self-center">{{ o.ubicacion }}</span>
+            </div>
+            <div class="col-md-9">
+              <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2 align-items-start">
+                  <div>
+                    <h3 class="h5 mb-1">{{ o.titulo }}</h3>
+                    <p class="mb-2 text-secondary small">
+                      {{ o.tipo_actividad }} · {{ o.disponibilidad }} · Cupos: {{ o.cupos }}
+                    </p>
+                  </div>
+                  @if (puedeMostrarPostularme(o)) {
+                    <button type="button" class="btn btn-sm btn-primary mam-btn-primary" (click)="onPostularmeClick(o.id)">
+                      {{ textoCtaPostularEnFeed }}
+                    </button>
+                  }
+                </div>
+                <p class="mb-0 small">{{ o.descripcion }}</p>
+                @if (auth.isLoggedIn() && yaPostuloEstaOportunidad(o.id)) {
+                  <p class="small text-primary fw-semibold mt-3 mb-0">Ya te has postulado a esta propuesta.</p>
+                }
+              </div>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    <div class="tab-pane fade" id="tab-post" role="tabpanel">
+      <h2 class="h5 fw-semibold mb-3">Mis postulaciones</h2>
+      @for (p of misPostulaciones(); track p.id) {
+        <article class="card mam-feed-card mb-3 border-0 shadow-sm">
+          <div class="row g-0 align-items-center">
+            <div class="col-md-3 mam-feed-strip-secondary p-3 text-center text-white">
+              <span class="small d-block">Estado</span>
+              <strong>{{ estadoPostulacionLegible(p.estado) }}</strong>
+            </div>
+            <div class="col-md-9">
+              <div class="card-body">
+                <h3 class="h6 mb-1">{{ p.oportunidad_titulo ?? 'Oportunidad #' + p.oportunidad }}</h3>
+                <p class="small text-muted mb-0">Enviado el {{ p.created_at | date: 'short' }}</p>
+                @if (p.comentario) {
+                  <p class="small mt-2 mb-0">{{ p.comentario }}</p>
+                }
+                <button
+                  type="button"
+                  class="btn btn-sm mam-btn-secondary mt-2"
+                  (click)="abrirMensajeVoluntarioAOrganizacion(p)"
+                >
+                  Escribir a la organización
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <p class="text-muted">Todavía no te postulaste a ninguna oportunidad.</p>
+      }
+    </div>
+
+    <div class="tab-pane fade" id="tab-pubs" role="tabpanel">
+      <h2 class="h5 fw-semibold mb-3">Mis publicaciones</h2>
+      @for (o of misOportunidades(); track o.id) {
+        <article class="card mam-feed-card mb-3 border-0 shadow-sm overflow-hidden">
+          <div class="row g-0">
+            <div
+              class="col-md-3 mam-feed-strip-org mam-pub-sidebar p-3 text-white d-flex flex-column align-items-stretch justify-content-center gap-3"
+            >
+              <span
+                class="mam-pub-status-badge align-self-center text-center small fw-semibold text-dark px-3 py-2 rounded-pill border border-2 border-dark"
+              >
+                {{ o.activa ? 'Activa' : 'Pausada' }}
+              </span>
+              <div class="d-flex flex-column gap-2 mam-pub-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm mam-pub-action-btn"
+                  (click)="toggleActiva(o)"
+                >
+                  {{ o.activa ? 'Pausar' : 'Activar' }}
+                </button>
+                <button type="button" class="btn btn-sm mam-pub-action-btn" (click)="editarOportunidad(o)">
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm mam-pub-action-btn mam-pub-action-btn-danger"
+                  (click)="eliminarOportunidad(o.id)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <div class="card-body">
+                <h3 class="h6 mb-1">{{ o.titulo }}</h3>
+                <p class="small mb-0">{{ o.descripcion }}</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <p class="text-muted">No hay publicaciones en tus organizaciones todavía.</p>
+      }
+    </div>
+
+    <div class="tab-pane fade" id="tab-postulantes" role="tabpanel">
+      <h2 class="h5 fw-semibold mb-3">Postulantes</h2>
+      @for (b of postulacionesBloques(); track b.oportunidadId) {
+        <section class="card mam-feed-card border-2 shadow-sm mb-4 overflow-hidden">
+          <div class="card-header py-3 px-3 border-bottom border-2 bg-light">
+            <h3 class="h6 mb-0 fw-semibold text-uppercase text-muted">{{ b.titulo }}</h3>
+          </div>
+          <div class="list-group list-group-flush">
+            @for (p of b.items; track p.id) {
+              <div class="list-group-item px-3 py-3 mam-postulante-fila">
+                <div
+                  class="d-flex flex-column flex-xl-row flex-xl-nowrap align-items-xl-center justify-content-xl-between gap-3"
+                >
+                  <div class="flex-grow-1 min-w-0">
+                    <span class="small fw-semibold text-break d-block">{{
+                      p.voluntario_username ?? 'Usuario ' + p.voluntario
+                    }}</span>
+                  </div>
+                  <div
+                    class="d-flex flex-wrap flex-xl-nowrap align-items-center gap-2 justify-content-xl-end flex-shrink-0 mam-postulante-toolbar"
+                  >
+                    @if (p.estado === 'CAN') {
+                      <span class="small text-muted mb-0 ms-xl-auto">Estado: cancelada</span>
+                    } @else {
+                      <label class="small mb-0 text-muted text-nowrap" [attr.for]="'estado-post-' + p.id">Estado</label>
+                      <select
+                        [id]="'estado-post-' + p.id"
+                        class="form-select form-select-sm mam-postulacion-estado"
+                        [value]="estadoSelectPara(p)"
+                        (change)="onEstadoSelectNativeChange(p, $event)"
+                        [disabled]="!puedeGestionarPostulantesEnVistaActual()"
+                      >
+                        <option value="PEN">Pendiente</option>
+                        <option value="ACE">Aceptada</option>
+                        <option value="REC">Rechazada</option>
+                      </select>
+                      @if (puedeGestionarPostulantesEnVistaActual()) {
+                        <button
+                          type="button"
+                          class="btn btn-sm mam-btn-secondary mam-post-guardar-btn text-nowrap"
+                          (click)="guardarEstadoPostulacion(p)"
+                          [disabled]="!hayCambioEstadoPostulacion(p)"
+                          [attr.title]="hayCambioEstadoPostulacion(p) ? null : 'No hay cambios para guardar.'"
+                        >
+                          Guardar
+                        </button>
+                      }
+                      @if (muestraBotonEscribirAlPostulante(p)) {
+                        <button
+                          type="button"
+                          class="btn btn-sm mam-btn-primary text-nowrap"
+                          (click)="abrirMensajeOrganizacionAPostulante(p, b.oportunidadId)"
+                        >
+                          Escribir al postulante
+                        </button>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="list-group-item text-muted small py-3">Sin postulaciones aún.</div>
+            }
+          </div>
+        </section>
+      } @empty {
+        <p class="text-muted small">No hay convocatorias con postulantes todavía.</p>
+      }
+    </div>
+
+    <div class="tab-pane fade" id="tab-msg" role="tabpanel">
+      <h2 class="h5 fw-semibold mb-3">Mensajes</h2>
+      @if (avisoComposeMensajes(); as av) {
+        <div class="alert alert-warning py-2 small mb-3" role="status">{{ av }}</div>
+      }
+
+      <div class="row g-3 align-items-start">
+        <div class="col-12" [class.col-lg-4]="mensajeCtx()">
+          <h3 class="h6 fw-semibold mb-2">Conversaciones</h3>
+          @if (
+            (puedeGestionarPostulantesEnVistaActual() && postulacionesBloques().length) ||
+            misPostulaciones().length
+          ) {
+            @if (puedeGestionarPostulantesEnVistaActual() && postulacionesBloques().length) {
+              @for (b of postulacionesBloques(); track b.oportunidadId) {
+                <div class="small fw-semibold text-uppercase text-muted mb-1">{{ b.titulo }}</div>
+                <div class="list-group mam-conv-list mb-3">
+                  @for (p of b.items; track p.id) {
+                    <button
+                      type="button"
+                      class="list-group-item list-group-item-action mam-conv-list-item d-flex flex-column align-items-start text-start py-2"
+                      [class.active]="conversacionActivaPostulacionId() === p.id"
+                      (click)="seleccionarThreadMensajesOrg(p)"
+                    >
+                      <span class="fw-semibold">{{ p.voluntario_username ?? 'Usuario ' + p.voluntario }}</span>
+                      <span class="small text-muted">Estado: {{ estadoPostulacionLegible(p.estado) }}</span>
+                    </button>
+                  }
+                </div>
+              }
+            }
+            @if (misPostulaciones().length) {
+              <div
+                class="list-group mam-conv-list"
+                [class.mt-3]="puedeGestionarPostulantesEnVistaActual() && postulacionesBloques().length"
+              >
+                @for (p of misPostulaciones(); track p.id) {
+                  <button
+                    type="button"
+                    class="list-group-item list-group-item-action mam-conv-list-item d-flex flex-column align-items-start text-start py-2"
+                    [class.active]="conversacionActivaPostulacionId() === p.id"
+                    (click)="seleccionarThreadMensajesVol(p)"
+                  >
+                    <span class="fw-semibold">{{ p.oportunidad_titulo ?? 'Oportunidad #' + p.oportunidad }}</span>
+                    <span class="small text-muted">Estado: {{ estadoPostulacionLegible(p.estado) }}</span>
+                  </button>
+                }
+              </div>
+            }
+          } @else {
+            <p class="small text-muted mb-0">
+              Cuando tengas postulaciones enviadas o recibidas, vas a ver acá cada hilo para abrirlo con un clic.
+            </p>
+          }
+        </div>
+
+        @if (mensajeCtx()) {
+          <div class="col-12 col-lg-8">
+            <div class="mam-chat-shell mb-3">
+              <div class="mam-chat-thread-box px-3 py-3">
+                @for (m of bandejaMensajesThread(); track m.id) {
+                  <div
+                    class="mam-chat-bubble mb-2"
+                    [class.mam-chat-bubble-out]="esMensajeSaliente(m)"
+                    [class.mam-chat-bubble-in]="!esMensajeSaliente(m)"
+                  >
+                    <div class="small fw-semibold mam-chat-bubble-meta">
+                      @if (esMensajeSaliente(m)) {
+                        <span>Vos</span>
+                        @if (m.destinatario_username) {
+                          <span class="text-muted fw-normal">→ {{ m.destinatario_username }}</span>
+                        }
+                      } @else {
+                        <span>{{ m.remitente_username ?? 'Usuario ' + m.remitente }}</span>
+                      }
+                    </div>
+                    <div class="mam-chat-body">{{ m.cuerpo }}</div>
+                    <div class="small text-muted">{{ m.created_at | date: 'short' }}</div>
+                  </div>
+                } @empty {
+                  <p class="text-muted small text-center py-4 mb-0">Todavía no hay mensajes en este hilo.</p>
+                }
+              </div>
+
+              <div id="mam-compose-anchor" class="mam-chat-compose mam-chat-compose-pane px-3 py-3">
+                <form [formGroup]="contextMsgForm" (ngSubmit)="enviarMensajeContextual()" class="d-flex flex-column gap-2 w-100">
+                  <label class="form-label small mb-0 visually-hidden" for="ctx-msg">Mensaje</label>
+                  <textarea
+                    id="ctx-msg"
+                    class="form-control mam-chat-input w-100"
+                    rows="2"
+                    formControlName="cuerpo"
+                    placeholder="Escribí tu mensaje…"
+                  ></textarea>
+                  @if (contextMsgForm.controls.cuerpo.touched && contextMsgForm.controls.cuerpo.invalid) {
+                    <div class="small text-danger">Entre 5 y 4000 caracteres.</div>
+                  }
+                  <button type="submit" class="btn btn-sm mam-btn-primary align-self-start">Enviar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-mis-orgs" role="tabpanel">
+        <h2 class="h5 fw-semibold mb-3">Mis organizaciones</h2>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary mam-btn-primary"
+            (click)="nuevaOrganizacion()"
+          >
+            Nueva organización
+          </button>
+        </div>
+
+        @for (org of misOrganizaciones(); track org.id) {
+          <article class="card mam-feed-card mb-3 border-0 shadow-sm">
+            <div class="card-body d-flex flex-wrap justify-content-between gap-2 align-items-start">
+              <div>
+                <h3 class="h6 mb-1">{{ org.nombre_publico }}</h3>
+                <p class="small text-muted mb-0">{{ org.email_contacto }}</p>
+                @if (org.descripcion) {
+                  <p class="small mb-0 mt-1">{{ org.descripcion }}</p>
+                }
+              </div>
+              <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-outline-secondary" (click)="editarOrganizacion(org)">Editar</button>
+                <button type="button" class="btn btn-outline-danger" (click)="eliminarOrganizacion(org)">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <p class="text-muted small mb-3">Todavía no registraste ninguna organización.</p>
+        }
+
+        <div class="card border-2 mam-form-card mt-4">
+          <div class="card-body">
+            <h3 class="h6 fw-bold">
+              @if (orgEditandoId() !== null) {
+                Editar organización
+              } @else {
+                Nueva organización
+              }
+            </h3>
+            <form [formGroup]="orgForm" (ngSubmit)="guardarOrganizacion()">
+              <div class="mb-2">
+                <label class="form-label small" for="org-nombre">Nombre público</label>
+                <input id="org-nombre" class="form-control form-control-sm" formControlName="nombre_publico" />
+                @if (orgForm.controls.nombre_publico.touched && orgForm.controls.nombre_publico.invalid) {
+                  <div class="small text-danger mt-1">Entre 3 y 200 caracteres.</div>
+                }
+              </div>
+              <div class="mb-2">
+                <label class="form-label small" for="org-email">Email de contacto</label>
+                <input
+                  id="org-email"
+                  type="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  class="form-control form-control-sm"
+                  formControlName="email_contacto"
+                />
+                @if (orgForm.controls.email_contacto.touched && orgForm.controls.email_contacto.invalid) {
+                  <div class="small text-danger mt-1">Introducí un email válido (ej: contacto@miorganizacion.org).</div>
+                }
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Descripción</label>
+                <textarea class="form-control form-control-sm" rows="2" formControlName="descripcion"></textarea>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Teléfono</label>
+                <input class="form-control form-control-sm" formControlName="telefono" />
+              </div>
+              <div class="mb-2">
+                <label class="form-label small" for="org-sitio">Sitio web</label>
+                <input
+                  id="org-sitio"
+                  type="url"
+                  class="form-control form-control-sm"
+                  formControlName="sitio_web"
+                  placeholder="https://… (opcional)"
+                />
+                @if (orgForm.controls.sitio_web.touched && orgForm.controls.sitio_web.hasError('httpUrl')) {
+                  <div class="small text-danger mt-1">Introducí una URL válida (con o sin https://).</div>
+                }
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm mam-btn-secondary" type="submit">
+                  @if (orgEditandoId() !== null) {
+                    Guardar cambios
+                  } @else {
+                    Crear organización
+                  }
+                </button>
+                @if (orgEditandoId() !== null) {
+                  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelarEdicionOrganizacion()">
+                    Cancelar
+                  </button>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-publicar" role="tabpanel">
+        <h2 class="h5 fw-semibold mb-3">Publicar convocatoria</h2>
+
+        @if (misOrganizaciones().length === 0) {
+          <div class="alert alert-warning small">
+            Necesitás una ficha en <strong>Mis organizaciones</strong> antes de publicar.
+            <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="irATabMisOrganizaciones()">
+              Ir a Mis organizaciones
+            </button>
+          </div>
+        } @else {
+          <div class="mb-3">
+            <label class="form-label small fw-semibold" for="sel-org-publicar">Organización</label>
+            <select
+              id="sel-org-publicar"
+              class="form-select form-select-sm"
+              style="max-width: 28rem"
+              [value]="publicarOrgSelectValue()"
+              (change)="onPublicarOrgNativeSelectChange($event)"
+            >
+              @for (org of misOrganizaciones(); track org.id) {
+                <option [value]="org.id">{{ org.nombre_publico }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="card border-2 mam-form-card mt-4">
+          <div class="card-body">
+            <h3 class="h6 fw-bold">
+              @if (oppEditandoId() !== null) {
+                Editar convocatoria
+              } @else {
+                Nueva oportunidad
+              }
+            </h3>
+            @if (!organizacionParaPublicar()) {
+              <p class="small text-warning">Elegí una organización arriba o creá una en Mis organizaciones.</p>
+            }
+            <form [formGroup]="oppForm" (ngSubmit)="guardarOportunidad()">
+              <div class="mb-2">
+                <label class="form-label small">Título</label>
+                <input class="form-control form-control-sm" formControlName="titulo" />
+                @if (oppForm.controls.titulo.touched && oppForm.controls.titulo.invalid) {
+                  <div class="small text-danger mt-1">Entre 5 y 200 caracteres.</div>
+                }
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Descripción</label>
+                <textarea class="form-control form-control-sm" rows="3" formControlName="descripcion"></textarea>
+                @if (oppForm.controls.descripcion.touched && oppForm.controls.descripcion.invalid) {
+                  <div class="small text-danger mt-1">Al menos 10 caracteres.</div>
+                }
+              </div>
+              <div class="row g-1">
+                <div class="col-md-6 mb-2">
+                  <label class="form-label small">Ubicación</label>
+                  <input class="form-control form-control-sm" formControlName="ubicacion" />
+                  @if (oppForm.controls.ubicacion.touched && oppForm.controls.ubicacion.invalid) {
+                    <div class="small text-danger mt-1">Entre 3 y 200 caracteres.</div>
+                  }
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label class="form-label small">Causa</label>
+                  <input class="form-control form-control-sm" formControlName="causa" />
+                  @if (oppForm.controls.causa.touched && oppForm.controls.causa.invalid) {
+                    <div class="small text-danger mt-1">Entre 2 y 120 caracteres.</div>
+                  }
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small" for="opp-tipo-actividad">Tipo de actividad</label>
+                <select id="opp-tipo-actividad" class="form-select form-select-sm" formControlName="tipo_actividad">
+                  <option value="" disabled>- Elegí una categoría -</option>
+                  @for (t of tiposActividadSelectOptions(); track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+                @if (oppForm.controls.tipo_actividad.touched && oppForm.controls.tipo_actividad.invalid) {
+                  <div class="small text-danger mt-1">Elegí un tipo de actividad.</div>
+                }
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Disponibilidad requerida</label>
+                <input class="form-control form-control-sm" formControlName="disponibilidad" />
+                @if (oppForm.controls.disponibilidad.touched && oppForm.controls.disponibilidad.invalid) {
+                  <div class="small text-danger mt-1">Entre 3 y 200 caracteres.</div>
+                }
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Requisitos</label>
+                <textarea class="form-control form-control-sm" rows="2" formControlName="requisitos"></textarea>
+              </div>
+              <div class="row g-1">
+                <div class="col-4 mb-2">
+                  <label class="form-label small">Cupos</label>
+                  <input type="number" class="form-control form-control-sm" formControlName="cupos" />
+                  @if (oppForm.controls.cupos.touched && oppForm.controls.cupos.invalid) {
+                    <div class="small text-danger mt-1">Entre 1 y 999.</div>
+                  }
+                </div>
+                <div class="col-8 mb-2">
+                  <label class="form-label small">Fecha actividad (opcional)</label>
+                  <input type="date" class="form-control form-control-sm" formControlName="fecha_actividad" />
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button
+                  class="btn btn-sm btn-primary mam-btn-primary"
+                  type="submit"
+                  [disabled]="!organizacionParaPublicar()"
+                >
+                  @if (oppEditandoId() !== null) {
+                    Guardar cambios
+                  } @else {
+                    Publicar
+                  }
+                </button>
+                @if (oppEditandoId() !== null) {
+                  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelarEdicionOportunidad()">
+                    Cancelar edición
+                  </button>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
