@@ -5,17 +5,16 @@ services:
     restart: unless-stopped
     env_file:
       - ./Backend/.env
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-manoamano_db}
-      MYSQL_USER: ${MYSQL_USER:-manoamano_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-manoamano_pass}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_manoamano}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_manoamano}"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10
