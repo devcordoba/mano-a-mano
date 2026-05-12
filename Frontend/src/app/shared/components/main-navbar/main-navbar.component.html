@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-light mam-navbar shadow-sm">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2 mam-brand-link" routerLink="/inicio">
+      <img
+        class="mam-brand-logo"
+        src="/logo-mano-a-mano.png"
+        width="160"
+        height="48"
+        alt="Mano a mano"
+        decoding="async"
+      />
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navMain"
+      aria-controls="navMain"
+      aria-expanded="false"
+      aria-label="Menú"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            >Inicio</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/nosotros" routerLinkActive="active">Quiénes somos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/panel" routerLinkActive="active">Dashboard</a>
+        </li>
+        <li class="nav-item d-flex align-items-center gap-2 ms-lg-2">
+          @if (auth.isLoggedIn()) {
+            <span class="navbar-text small d-none d-md-inline text-truncate" style="max-width: 10rem">{{
+              auth.displayLabel()
+            }}</span>
+            <button type="button" class="btn btn-sm mam-nav-login" (click)="auth.logout()">Salir</button>
+          } @else {
+            <a class="btn btn-sm mam-nav-login" routerLink="/login">Ingresar</a>
+          }
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
