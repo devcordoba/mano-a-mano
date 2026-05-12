@@ -121,7 +121,7 @@ setup.windows.bat     # Windows
 
 | Documento | Ubicaación |
 |-----------|------------|
-| Documentación del proyecto | https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/Documentación del proyecto.md |
+| Documentación del proyecto | [Documentación completa](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documentaci%C3%B3n%20del%20proyecto.md) |
 | DER y modelo relacional | [`Documentación/DER_Y_MODELO_RELACIONAL.md`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/DER_Y_MODELO_RELACIONAL.md) |
 | Esquema SQL | [`Documentación/mano-a-mano-esquemaDB.sql`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/mano-a-mano-esquemaDB.sql) |
 | Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki) |
