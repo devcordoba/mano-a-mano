@@ -1,97 +1,130 @@
-# mano-a-mano
+# Mano a mano — Red de voluntarios
 
-## Descripción del proyecto
+Mano a mano es una plataforma web que conecta **voluntarios** con **organizaciones sociales** que necesitan ayuda. Permite publicar oportunidades de voluntariado, explorar convocatorias activas, postularse y coordinar actividades mediante mensajería contextual.
 
-Mano a Mano es una plataforma web que conecta voluntarios con organizaciones que necesitan ayuda. Permite encontrar oportunidades de voluntariado según ubicación, intereses y disponibilidad.
+**Problema que resuelve:** las personas quieren ayudar, pero no saben dónde ni cómo hacerlo. La información sobre voluntariados está fragmentada en redes sociales, grupos de mensajería y contactos informales.
 
-Problema que resuelve: muchas personas quieren ayudar, pero no saben dónde ni cómo hacerlo.
-
-Propuesta de valor: mostrar oportunidades cercanas y facilitar la participación social.
+**Propuesta de valor:** centralizar la publicación y búsqueda de oportunidades de voluntariado en una plataforma única, reduciendo barreras de participación y mejorando la visibilidad de iniciativas solidarias.
 
 ---
 
 ## Instrucciones de instalación
 
-1. Clonar repositorio
+### Prerrequisitos
 
-git clone https://github.com/devcordoba/mano-a-mano.git
+- **Git**
+- **Node.js** 22+ y **npm**
+- **Python** 3.12+
+- **MySQL** 8.0 (o Docker)
 
-2. Frontend
+### 1. Clonar el repositorio
 
 ```bash
-cd Frontend
-npm install
-ng serve
+git clone https://github.com/devcordoba/mano-a-mano.git
+cd mano-a-mano
 ```
 
-3. Backend
+### 2. Backend
 
 ```bash
 cd Backend
+
+# Crear y activar entorno virtual
 python3 -m venv .venv
-source .venv/bin/activate
+#source .venv/bin/activate        # Linux/macOS
+.venv\Scripts\activate         # Windows
+
+# Instalar dependencias
 pip install -r requirements.txt
-copy .env_modelo .env
+
+# Configurar variables de entorno
+cp .env_modelo .env
+# Editar .env con los datos de tu base de datos MySQL
+
+# Ejecutar migraciones
 python manage.py migrate
+
+# Iniciar el servidor
 python manage.py runserver
 ```
+
+El backend queda disponible en **http://localhost:8000**.
+
+### 3. Frontend (Angular)
+
+```bash
+cd Frontend
+
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+ng serve
+```
+
+El frontend queda disponible en **http://localhost:4200**.
+
+### 4. Alternativa con Docker
+
+```bash
+# O usar los scripts interactivos:
+#./setup.linux.sh        # Linux
+setup.windows.bat     # Windows
+```
+---
+
+## Integrantes del equipo y roles
+
+| Nombre | Rol | Usuario de Github |
+|--------|-----|-------------------|
+| Pilar Molina | Developer | https://github.com/LindaInfinita10 |
+| Lucas Monzón | Developer | https://github.com/lcmonzon |
+| Ivo Konstantinow | Developer | https://github.com/konstantinowivo |
+| Gonzalo Nicolás Quiroga | Scrum Master/Developer | https://github.com/Gonzalo-Quiroga |
+| Lanfranco Darel Caballero | Product Owner/Developer | https://github.com/dbm4x |
+
+---
+
+## Stack tecnológico
+
+|  | Tecnología | Versión |
+|------|-----------|---------|
+| Frontend | Angular/Bootstrap| 21/5
+| Backend | Django/Django REST Framework |
+| Base de datos | MySQL | 8.0 |
 
 ---
 
 ## Uso básico
 
-### Usuarios voluntarios
+### Visitante
+1. Abrir http://localhost:4200 para ver la página de inicio.
+2. Registrarse con usuario, email y contraseña desde el formulario de la página de inicio.
 
-- Registrarse en la plataforma.
-- Buscar oportunidades disponibles.
-- Filtrar por ubicación o actividad.
-- Postularse a voluntariados.
-- Recibir mensajes de organizaciones.
+### Voluntario
+1. Iniciar sesión en `/login`.
+2. Explorar oportunidades activas en el panel.
+3. Postularse a una convocatoria con el botón "Postularme".
+4. Ver el estado de postulaciones en la pestaña "Mis postulaciones".
+5. Enviar y recibir mensajes desde la pestaña "Mensajes".
 
-### Organizaciones
-
-- Registrarse como organización.
-- Publicar oportunidades.
-- Editar publicaciones.
-- Revisar postulaciones.
-- Contactar voluntarios.
-
----
-
-## Lista de requerimientos
-
-### Funcionales
-
-- RF1: Registro de usuarios como voluntarios u organizaciones.
-- RF2: Búsqueda de oportunidades con filtros.
-- RF3: Publicación, edición y eliminación de oportunidades.
-- RF4: Postulación a voluntariados activos.
-- RF5: Mensajería entre organizaciones y voluntarios.
-
-
-### No funcionales
-
-- RNF1: Buen rendimiento y navegación fluida.
-- RNF2: Seguridad mediante autenticación con **token opaco de Django REST Framework** (`Authorization: Token …`), no JWT.
-- RNF3: Control de acceso por roles.
-- RNF4: Diseño responsive para dispositivos móviles.
-- RNF5: Uso intuitivo y accesible.
-
-## Endpoints base
-
-- Frontend: http://localhost:4200
-- Backend: http://localhost:8000
-- API Healthcheck: http://localhost:8000/api/health/
-- API Oportunidades: http://localhost:8000/api/oportunidades/
-
----
-## Estado del proyecto
-
-En desarrollo.
+### Organización
+1. Iniciar sesión.
+2. Crear una organización desde "Mis organizaciones".
+3. Publicar oportunidades de voluntariado desde "Publicar oferta".
+4. Revisar postulantes y cambiar estados (aceptar/rechazar) en "Postulantes".
+5. Coordinar con voluntarios mediante mensajería.
 
 ---
 
-## Equipo
+## Documentación
 
-PLIGAT Devs  
-DevCordoba
+| Documento | Ubicación |
+|-----------|-----------|
+| Documentación del proyecto | [`Documentación/actividad-3-documentacion-inicial-proyecto.md`](Documentación/actividad-3-documentacion-inicial-proyecto.md) |
+| DER y modelo relacional | [`Documentacion/DER_Y_MODELO_RELACIONAL.md`](Documentación/DER_Y_MODELO_RELACIONAL) |
+| Esquema SQL | [Link](Documentación/mano-a-mano-esquemaDB) |
+| Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias)
+| Registro de ceremonias Scrum | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias) |
+
+---
