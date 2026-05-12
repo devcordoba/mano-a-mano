@@ -56,6 +56,11 @@ if /i "%OPTION%"=="--help" (
   goto :end
 )
 
+if /i "%OPTION%"=="-h" (
+  call :printHelp
+  goto :end
+)
+
 echo Opcion no valida: %OPTION%
 echo.
 call :printHelp
@@ -133,7 +138,11 @@ echo Backend:  http://localhost:8000/api/health/
 exit /b 0
 
 :mysqlDataVolumeName
-for %%I in ("%CD%") do set "MYSQLVOL=%%~nxI_mysql_data"
+if defined COMPOSE_PROJECT_NAME (
+  set "MYSQLVOL=%COMPOSE_PROJECT_NAME%_mysql_data"
+) else (
+  for %%I in ("%CD%") do set "MYSQLVOL=%%~nxI_mysql_data"
+)
 exit /b 0
 
 :runBuild
@@ -201,6 +210,7 @@ echo --stop                Detener servicios
 echo --down                Destruir servicios
 echo --up-interface        Levantar y mostrar solo IP local asociada
 echo --help                Obtener Ayuda
+echo -h                    Igual que --help
 echo.
 exit /b 0
 
