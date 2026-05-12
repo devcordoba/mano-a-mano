@@ -451,8 +451,8 @@ El equipo adoptó **GitHub Projects** como tablero Kanban de trabajo con columna
 | Documento | Ubicación |
 |-----------|-----------|
 | Documentación del proyecto | [`Documentación/Documentación del proyecto.md`](Documentación/Documentación del proyecto.md) |
-| DER y modelo relacional | [`Documentacion/DER_Y_MODELO_RELACIONAL.md`](Documentación/DER_Y_MODELO_RELACIONAL) |
-| Esquema SQL | [Link](Documentación/mano-a-mano-esquemaDB) |
+| DER y modelo relacional | [`Documentación/DER_Y_MODELO_RELACIONAL.md`](Documentación/DER_Y_MODELO_RELACIONAL) |
+| Esquema SQL | [Link](Documentación/mano-a-mano-esquemaDB.sql) |
 | Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias)
 | Registro de ceremonias Scrum | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias) |
 
