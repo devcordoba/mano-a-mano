@@ -5,18 +5,18 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'inicio' },
   {
     path: 'inicio',
-    title: 'Inicio - Mano a mano',
+    title: 'Inicio - Mano a Mano',
     loadComponent: () => import('./pages/home/home').then((m) => m.HomePage),
   },
   {
     path: 'nosotros',
-    title: 'Quiénes somos - Mano a mano',
+    title: 'Quiénes somos - Mano a Mano',
     loadComponent: () =>
       import('./pages/quienes-somos/quienes-somos').then((m) => m.QuienesSomosPage),
   },
   {
     path: 'login',
-    title: 'Iniciar sesión - Mano a mano',
+    title: 'Iniciar sesión - Mano a Mano',
     canActivate: [guestGuard],
     loadComponent: () => import('./pages/login/login').then((m) => m.LoginPage),
   },
@@ -25,17 +25,18 @@ export const routes: Routes = [
     children: [
       {
         path: 'admin',
-        title: 'Panel Admin - Mano a mano',
+        title: 'Panel Admin - Mano a Mano',
         loadComponent: () =>
           import('./pages/panel-admin/panel-admin').then((m) => m.PanelAdminPage),
       },
       {
         path: 'usuario',
-        title: 'Mi Panel - Mano a mano',
+        title: 'Mi Panel - Mano a Mano',
         loadComponent: () =>
           import('./pages/panel-usuario/panel-usuario').then((m) => m.PanelUsuarioPage),
       },
       { path: '', pathMatch: 'full', redirectTo: 'usuario' },
-    ]
-    }
+    ],
+  },
+  { path: '**', redirectTo: 'inicio' },
 ];

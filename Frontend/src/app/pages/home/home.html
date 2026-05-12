@@ -2,21 +2,25 @@
   <div class="container py-5">
     <div class="row align-items-center g-4">
       <div class="col-lg-7">
-        <p class="text-uppercase small fw-bold mam-accent-label">Red de voluntarios · Córdoba</p>
-        <h1 class="display-5 fw-bold mam-hero-title">Conectamos quienes quieren ayudar con quienes necesitan una mano</h1>
+        <p class="text-uppercase small fw-bold mam-accent-label">Voluntariado · Córdoba, Argentina</p>
+        <h1 class="display-5 fw-bold mam-hero-title">
+          Encontrá tu próxima causa y sumate a quienes hacen la diferencia
+        </h1>
         <p class="lead mam-hero-lead">
-          Oportunidades reales de voluntariado, postulaciones y mensajes con organizaciones - todo desde un solo lugar.
+          Mano a Mano te conecta con organizaciones locales que buscan voluntarios.
+          Explorá causas, postulate y gestioná tu experiencia solidaria en un solo lugar.
         </p>
         @if (auth.isLoggedIn()) {
-          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Entrar al panel</a>
+          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Ir al panel</a>
         } @else {
-          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Explorar ofertas!</a>
+          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Explorar oportunidades</a>
         }
         <a routerLink="/nosotros" class="btn btn-lg btn-outline-secondary mb-2">Quiénes somos</a>
       </div>
       <div class="col-lg-5">
         <div class="mam-hero-card p-4 rounded-4 shadow">
-          <h2 class="h5 fw-bold mb-3">Registro</h2>
+          <h2 class="h5 fw-bold mb-1">Crear cuenta</h2>
+          <p class="text-muted small mb-3">Gratis. Sin complicaciones.</p>
           @if (mensaje()) {
             <div class="alert alert-success small" role="status">{{ mensaje() }}</div>
           }
@@ -29,28 +33,20 @@
               <input id="u" class="form-control" formControlName="username" autocomplete="username" />
               @if (registroForm.controls['username'].touched && registroForm.controls['username'].errors; as e) {
                 <div class="invalid-feedback d-block small">
-                  @if (e['required']) {
-                    Requerido.
-                  } @else if (e['minlength']) {
-                    Mínimo 3 caracteres.
-                  } @else if (e['maxlength']) {
-                    Máximo 150.
-                  } @else if (e['pattern']) {
-                    Solo letras, números y _ @ . + -
-                  }
+                  @if (e['required']) { Requerido. }
+                  @else if (e['minlength']) { Mínimo 3 caracteres. }
+                  @else if (e['maxlength']) { Máximo 150. }
+                  @else if (e['pattern']) { Solo letras, números y _ @ . + - }
                 </div>
               }
             </div>
             <div class="mb-2">
-              <label class="form-label small" for="e">Correo</label>
+              <label class="form-label small" for="e">Correo electrónico</label>
               <input id="e" type="email" class="form-control" formControlName="email" autocomplete="email" />
               @if (registroForm.controls['email'].touched && registroForm.controls['email'].errors; as e) {
                 <div class="invalid-feedback d-block small">
-                  @if (e['required']) {
-                    Requerido.
-                  } @else if (e['email']) {
-                    Formato de email inválido.
-                  }
+                  @if (e['required']) { Requerido. }
+                  @else if (e['email']) { Formato de email inválido. }
                 </div>
               }
             </div>
@@ -59,13 +55,9 @@
               <input id="p" type="password" class="form-control" formControlName="password" autocomplete="new-password" />
               @if (registroForm.controls['password'].touched && registroForm.controls['password'].errors; as e) {
                 <div class="invalid-feedback d-block small">
-                  @if (e['required']) {
-                    Requerida.
-                  } @else if (e['minlength']) {
-                    Mínimo 8 caracteres.
-                  } @else if (e['maxlength']) {
-                    Máximo 128.
-                  }
+                  @if (e['required']) { Requerida. }
+                  @else if (e['minlength']) { Mínimo 8 caracteres. }
+                  @else if (e['maxlength']) { Máximo 128. }
                 </div>
               }
             </div>
@@ -80,7 +72,7 @@
               </div>
             </div>
             <button type="submit" class="btn mam-btn-primary w-100 mt-2" [disabled]="enviando()">
-              {{ enviando() ? 'Enviando…' : 'Crear usuario' }}
+              {{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
             </button>
           </form>
         </div>
