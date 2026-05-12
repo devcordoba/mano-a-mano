@@ -26,7 +26,6 @@ cd mano-a-mano
 
 ### 2. Backend
 
-```bash
 cd Backend
 
 # Crear y activar entorno virtual
@@ -46,7 +45,6 @@ python manage.py migrate
 
 # Iniciar el servidor
 python manage.py runserver
-```
 
 El backend queda disponible en **http://localhost:8000**.
 
@@ -117,14 +115,14 @@ setup.windows.bat     # Windows
 
 ---
 
+
 ## Documentación
 
-| Documento | Ubicación |
+| Documento | Ubicaación |
 |-----------|-----------|
-| Documentación del proyecto | [`Documentación/actividad-3-documentacion-inicial-proyecto.md`](Documentación/actividad-3-documentacion-inicial-proyecto.md) |
-| DER y modelo relacional | [`Documentacion/DER_Y_MODELO_RELACIONAL.md`](Documentación/DER_Y_MODELO_RELACIONAL) |
-| Esquema SQL | [Link](Documentación/mano-a-mano-esquemaDB) |
-| Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias)
+| Documentación del proyecto | [`Documentación/Documentación del proyecto.md`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/Documentación del proyecto.md) |
+| DER y modelo relacional | [`Documentación/DER_Y_MODELO_RELACIONAL.md`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/DER_Y_MODELO_RELACIONAL.md) |
+| Esquema SQL | [`Documentación/mano-a-mano-esquemaDB.sql`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/mano-a-mano-esquemaDB.sql) |
+| Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki) |
 | Registro de ceremonias Scrum | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias) |
-
 ---
