@@ -1,14 +1,23 @@
 :root {
-  --color-primary: #7A2A2E;
-  --color-secondary: #A89888;
-  --color-bg: #F5F2EC;
-  --color-text: #2B2B2B;
-  --color-white: #FFFFFF;
+  --mam-bg-pink: #fff5f8;
+  --mam-magenta: #e91e8c;
+  --mam-orange: #ff7043;
+  --mam-blue: #3949ab;
+  --mam-green: #2e7d32;
+  --mam-lavender: #c5cae9;
+  --mam-lime-soft: #fff9c4;
+  --mam-charcoal: #424242;
+  --mam-black: #1a1a1a;
+  --mam-white: #ffffff;
 }
 
 body {
   margin: 0;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--mam-bg-pink);
+  color: var(--mam-charcoal);
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+a {
+  text-decoration-thickness: 1px;
 }

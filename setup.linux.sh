@@ -10,12 +10,15 @@ Docker Mano a Mano.
 
 Opciones:
 --build               Realizar 'docker compose up' con opcion --build
+--build-fresh-db      Igual que --build pero borra el volumen de MySQL antes
+                      (recrea usuario/base segun Backend/.env; pierde datos DB locales)
 --up                  Realizar 'docker compose up' sin opcion --build
 --list                Revisar contenedores levantados
 --stop                Detener servicios
 --down                Destruir servicios
 --up-interface        Levantar y mostrar solo IP local asociada
 --help                Obtener Ayuda
+-h                    Igual que --help
 EOF
 }
 
@@ -42,8 +45,42 @@ compose_cmd() {
   fi
 }
 
+docker_volume_rm() {
+  local vol="$1"
+  if docker volume rm "$vol" 2>/dev/null; then
+    return 0
+  fi
+  if sudo docker volume rm "$vol" 2>/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
 run_build() {
   ensure_env
+  compose_cmd up --build -d
+  show_local_urls
+}
+
+mysql_data_volume_name() {
+  local base="${COMPOSE_PROJECT_NAME:-}"
+  if [[ -z "$base" ]]; then
+    base="$(basename "$PROJECT_DIR")"
+  fi
+  echo "${base}_mysql_data"
+}
+
+run_build_fresh_db() {
+  ensure_env
+  local vol
+  vol="$(mysql_data_volume_name)"
+  echo "Deteniendo contenedores..."
+  compose_cmd down
+  if docker_volume_rm "$vol"; then
+    echo "Volumen MySQL eliminado: $vol (MySQL se inicializara de nuevo con Backend/.env)."
+  else
+    echo "No se pudo borrar el volumen '$vol' (no existia o esta en uso). Se continua igualmente."
+  fi
   compose_cmd up --build -d
   show_local_urls
 }
@@ -90,13 +127,14 @@ show_menu() {
   echo "Docker Mano a Mano."
   echo
   echo "Opciones:"
-  echo "[1] --build         Levantar con build"
-  echo "[2] --up            Levantar sin build"
-  echo "[3] --list          Revisar contenedores"
-  echo "[4] --stop          Detener servicios"
-  echo "[5] --down          Destruir servicios"
-  echo "[6] --up-interface  Levantar y mostrar interfaces"
-  echo "[7] --help          Ver ayuda"
+  echo "[1] --build              Levantar con build"
+  echo "[1b] --build-fresh-db     Build y DB MySQL nueva (borra datos locales MySQL)"
+  echo "[2] --up                 Levantar sin build"
+  echo "[3] --list               Revisar contenedores"
+  echo "[4] --stop               Detener servicios"
+  echo "[5] --down               Destruir servicios"
+  echo "[6] --up-interface       Levantar y mostrar interfaces"
+  echo "[7] --help               Ver ayuda"
   echo "[0] Salir"
   echo
 }
@@ -107,6 +145,7 @@ menu_loop() {
     read -r -p "Selecciona una opcion y presiona Enter: " menu_option
     case "${menu_option}" in
       1) run_build; pause_menu ;;
+      1b|1B) run_build_fresh_db; pause_menu ;;
       2) run_up; pause_menu ;;
       3) run_list; pause_menu ;;
       4) run_stop; pause_menu ;;
@@ -127,6 +166,9 @@ fi
 case "${1:-}" in
   --build)
     run_build
+    ;;
+  --build-fresh-db)
+    run_build_fresh_db
     ;;
   --up)
     run_up

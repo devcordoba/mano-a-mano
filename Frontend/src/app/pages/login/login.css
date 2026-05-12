@@ -1,0 +1,20 @@
+.mam-title {
+  color: var(--mam-charcoal, #424242);
+}
+
+.mam-card {
+  border-color: var(--mam-black, #1a1a1a) !important;
+  background: var(--mam-white, #fff);
+}
+
+.mam-btn-primary {
+  background-color: var(--mam-magenta, #e91e8c);
+  border-color: var(--mam-black, #1a1a1a);
+  color: var(--mam-white, #fff);
+  font-weight: 600;
+}
+
+.mam-btn-primary:hover:not(:disabled) {
+  background-color: var(--mam-orange, #ff7043);
+  color: var(--mam-black, #1a1a1a);
+}
