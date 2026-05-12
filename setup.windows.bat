@@ -1,7 +1,7 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 
-cd /d %~dp0
+cd /d "%~dp0"
 
 where docker >nul 2>&1
 if errorlevel 1 (
@@ -16,37 +16,42 @@ call :ensureEnv
 set "OPTION=%~1"
 if "%OPTION%"=="" goto :menu
 
-if "%OPTION%"=="--build" (
+if /i "%OPTION%"=="--build" (
   call :runBuild
   goto :end
 )
 
-if "%OPTION%"=="--up" (
+if /i "%OPTION%"=="--build-fresh-db" (
+  call :runBuildFreshDb
+  goto :end
+)
+
+if /i "%OPTION%"=="--up" (
   call :runUp
   goto :end
 )
 
-if "%OPTION%"=="--list" (
+if /i "%OPTION%"=="--list" (
   call :runList
   goto :end
 )
 
-if "%OPTION%"=="--stop" (
+if /i "%OPTION%"=="--stop" (
   call :runStop
   goto :end
 )
 
-if "%OPTION%"=="--down" (
+if /i "%OPTION%"=="--down" (
   call :runDown
   goto :end
 )
 
-if "%OPTION%"=="--up-interface" (
+if /i "%OPTION%"=="--up-interface" (
   call :runUpInterface
   goto :end
 )
 
-if "%OPTION%"=="--help" (
+if /i "%OPTION%"=="--help" (
   call :printHelp
   goto :end
 )
@@ -61,21 +66,25 @@ cls
 echo Docker Mano a Mano.
 echo.
 echo Opciones:
-echo [1] --build         Levantar con build
-echo [2] --up            Levantar sin build
-echo [3] --list          Revisar contenedores
-echo [4] --stop          Detener servicios
-echo [5] --down          Destruir servicios
-echo [6] --up-interface  Levantar y mostrar interfaces
-echo [7] --help          Ver ayuda
+echo [1] --build              Levantar con build
+echo [1b] --build-fresh-db    Build y DB MySQL nueva ^(borra datos locales MySQL^)
+echo [2] --up                 Levantar sin build
+echo [3] --list               Revisar contenedores
+echo [4] --stop               Detener servicios
+echo [5] --down               Destruir servicios
+echo [6] --up-interface       Levantar y mostrar interfaces
+echo [7] --help               Ver ayuda
 echo [0] Salir
-echo.
 echo.
 set "MENU_OPTION="
 set /p MENU_OPTION=Selecciona una opcion y presiona Enter: 
 
 if "%MENU_OPTION%"=="1" (
   call :runBuild
+  goto :menuPause
+)
+if /i "%MENU_OPTION%"=="1b" (
+  call :runBuildFreshDb
   goto :menuPause
 )
 if "%MENU_OPTION%"=="2" (
@@ -113,45 +122,79 @@ pause
 goto :menu
 
 :ensureEnv
-if not exist Backend\.env (
-  copy Backend\.env_modelo Backend\.env >nul
+if not exist "Backend\.env" (
+  copy /Y "Backend\.env_modelo" "Backend\.env" >nul
 )
 exit /b 0
 
-:runBuild
-docker compose up --build -d
-if errorlevel 1 exit /b %errorlevel%
+:showLocalUrls
 echo Frontend: http://localhost:4200
 echo Backend:  http://localhost:8000/api/health/
-exit /b %errorlevel%
+exit /b 0
+
+:mysqlDataVolumeName
+for %%I in ("%CD%") do set "MYSQLVOL=%%~nxI_mysql_data"
+exit /b 0
+
+:runBuild
+call :ensureEnv
+docker compose up --build -d
+if errorlevel 1 exit /b %errorlevel%
+call :showLocalUrls
+exit /b 0
+
+:runBuildFreshDb
+call :ensureEnv
+call :mysqlDataVolumeName
+echo Deteniendo contenedores...
+docker compose down
+docker volume rm "%MYSQLVOL%" >nul 2>&1
+if errorlevel 1 (
+  echo No se pudo borrar el volumen "%MYSQLVOL%" ^(no existia o esta en uso^). Se continua igualmente.
+) else (
+  echo Volumen MySQL eliminado: %MYSQLVOL% ^(MySQL se inicializara de nuevo con Backend\.env^).
+)
+docker compose up --build -d
+if errorlevel 1 exit /b %errorlevel%
+call :showLocalUrls
+exit /b 0
 
 :runUp
+call :ensureEnv
 docker compose up -d
-exit /b %errorlevel%
+if errorlevel 1 exit /b %errorlevel%
+call :showLocalUrls
+exit /b 0
 
 :runList
+call :ensureEnv
 docker compose ps
 exit /b %errorlevel%
 
 :runStop
+call :ensureEnv
 docker compose stop
 exit /b %errorlevel%
 
 :runDown
+call :ensureEnv
 docker compose down
 exit /b %errorlevel%
 
 :runUpInterface
+call :ensureEnv
 docker compose up -d
-echo Frontend: http://localhost:4200
-echo Backend:  http://localhost:8000/api/health/
-exit /b %errorlevel%
+if errorlevel 1 exit /b %errorlevel%
+call :showLocalUrls
+exit /b 0
 
 :printHelp
 echo Docker Mano a Mano.
 echo.
 echo Opciones:
 echo --build               Realizar 'docker compose up' con opcion --build
+echo --build-fresh-db      Igual que --build pero borra el volumen de MySQL antes
+echo                       ^(recrea usuario/base segun Backend\.env; pierde datos DB locales^)
 echo --up                  Realizar 'docker compose up' sin opcion --build
 echo --list                Revisar contenedores levantados
 echo --stop                Detener servicios
