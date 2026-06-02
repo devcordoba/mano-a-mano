@@ -1,0 +1,108 @@
+<section aria-labelledby="mensajes-heading">
+  <h2 id="mensajes-heading" class="h5 fw-semibold mb-3">Mensajes</h2>
+  @if (mensajes.avisoComposeMensajes()) {
+    <p class="alert alert-warning py-2 small mb-3" role="status">{{ mensajes.avisoComposeMensajes() }}</p>
+  }
+
+  <div class="row g-3 align-items-start">
+    <aside class="col-12" [class.col-lg-4]="mensajes.contextoMensaje()" aria-labelledby="mensajes-conversaciones-titulo">
+      <h3 id="mensajes-conversaciones-titulo" class="h6 fw-semibold mb-2">Conversaciones</h3>
+      @if (hayConversaciones()) {
+        @if (vistaOrganizadorActiva()) {
+          @for (bloque of bloquesOrganizacion(); track bloque.oportunidadId) {
+            <p class="small fw-semibold text-uppercase text-muted mb-1">{{ bloque.titulo }}</p>
+            <nav class="list-group mam-conv-list mb-3" aria-label="Conversaciones de {{ bloque.titulo }}">
+              @for (item of bloque.items; track item.postulacion.id) {
+                <button
+                  type="button"
+                  class="list-group-item list-group-item-action mam-conv-list-item d-flex flex-column align-items-start text-start py-2"
+                  [class.active]="mensajes.conversacionActivaPostulacionId() === item.postulacion.id"
+                  (click)="mensajes.abrirHiloOrganizacion(item.postulacion, item.postulacion.oportunidad)"
+                >
+                  <span class="fw-semibold">{{ item.nombreVoluntario }}</span>
+                  <span class="small text-muted">Estado: {{ item.estadoLegible }}</span>
+                </button>
+              }
+            </nav>
+          }
+        }
+        @if (mostrarListaVoluntario()) {
+          <nav
+            class="list-group mam-conv-list"
+            [class.mt-3]="vistaOrganizadorActiva()"
+            aria-label="Conversaciones como voluntario"
+          >
+            @for (item of conversacionesVoluntario(); track item.postulacion.id) {
+              <button
+                type="button"
+                class="list-group-item list-group-item-action mam-conv-list-item d-flex flex-column align-items-start text-start py-2"
+                [class.active]="mensajes.conversacionActivaPostulacionId() === item.postulacion.id"
+                (click)="mensajes.abrirHiloVoluntario(item.postulacion)"
+              >
+                <span class="fw-semibold">{{ item.tituloOportunidad }}</span>
+                <span class="small text-muted">Estado: {{ item.estadoLegible }}</span>
+              </button>
+            }
+          </nav>
+        }
+      } @else {
+        <p class="small text-muted mb-0">
+          Cuando tengas postulaciones enviadas o recibidas, vas a ver acá cada hilo para abrirlo con un clic.
+        </p>
+      }
+    </aside>
+
+    @if (mensajes.contextoMensaje()) {
+      <section class="col-12 col-lg-8" aria-labelledby="mensajes-hilo-titulo">
+        <h3 id="mensajes-hilo-titulo" class="visually-hidden">Hilo de mensajes activo</h3>
+        <div class="mam-chat-shell mb-3">
+          <div class="mam-chat-thread-box px-3 py-3" role="log" aria-live="polite" aria-relevant="additions">
+            @for (item of hiloMensajes(); track item.mensajeId) {
+              <article
+                class="mam-chat-bubble mb-2"
+                [class.mam-chat-bubble-out]="item.esSaliente"
+                [class.mam-chat-bubble-in]="!item.esSaliente"
+              >
+                <header class="small fw-semibold mam-chat-bubble-meta">
+                  @if (item.esSaliente) {
+                    <span>Vos</span>
+                    @if (item.destinatarioUsername) {
+                      <span class="text-muted fw-normal">→ {{ item.destinatarioUsername }}</span>
+                    }
+                  } @else {
+                    <span>{{ item.nombreRemitente }}</span>
+                  }
+                </header>
+                <p class="mam-chat-body mb-1">{{ item.cuerpo }}</p>
+                <time class="small text-muted">{{ item.createdAt | date: 'short' }}</time>
+              </article>
+            } @empty {
+              <p class="text-muted small text-center py-4 mb-0">Todavía no hay mensajes en este hilo.</p>
+            }
+          </div>
+
+          <footer #composeAnchor class="mam-chat-compose mam-chat-compose-pane px-3 py-3">
+            <form
+              [formGroup]="mensajes.formularioMensajeContextual"
+              (ngSubmit)="mensajes.enviarMensajeContextual()"
+              class="d-flex flex-column gap-2 w-100"
+            >
+              <label class="form-label small mb-0 visually-hidden" for="mensaje-contextual">Mensaje</label>
+              <textarea
+                id="mensaje-contextual"
+                class="form-control mam-chat-input w-100"
+                rows="2"
+                [formControl]="mensajes.formularioMensajeContextual.controls.cuerpo"
+                placeholder="Escribí tu mensaje…"
+              ></textarea>
+              @if (errorCuerpoMensaje()) {
+                <p class="invalid-feedback d-block small" role="alert">{{ errorCuerpoMensaje() }}</p>
+              }
+              <button type="submit" class="btn btn-sm mam-btn-primary align-self-start">Enviar</button>
+            </form>
+          </footer>
+        </div>
+      </section>
+    }
+  </div>
+</section>
