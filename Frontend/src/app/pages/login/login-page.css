@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.mam-auth-wrap {
+  max-width: 600px;
+}
+
+.mam-auth-back {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.mam-auth-back a {
+  color: var(--mam-blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mam-auth-back a:hover {
+  color: var(--mam-magenta);
+}
+
+.mam-auth-wrap .mam-card {
+  border-color: var(--mam-black);
+}
+
+.mam-auth-login {
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mam-auth-bridge {
+  margin: 1.25rem 0 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6c757d;
+  letter-spacing: 0.02em;
+}
+
+.mam-auth-register-wrap {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -119,11 +119,19 @@ setup.windows.bat     # Windows
 
 ## Documentación
 
-| Documento | Ubicaación |
-|-----------|------------|
-| Documentación del proyecto | [Documentación completa](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documentaci%C3%B3n%20del%20proyecto.md) |
-| DER y modelo relacional | [`Documentación/DER_Y_MODELO_RELACIONAL.md`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/DER_Y_MODELO_RELACIONAL.md) |
-| Esquema SQL | [`Documentación/mano-a-mano-esquemaDB.sql`](https://github.com/devcordoba/mano-a-mano/blob/main/Documentación/mano-a-mano-esquemaDB.sql) |
-| Wiki | [Link](https://github.com/devcordoba/mano-a-mano/wiki) |
-| Registro de ceremonias Scrum | [Link](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias) |
+Carpeta en GitHub: [Documentación](https://github.com/devcordoba/mano-a-mano/tree/main/Documentaci%C3%B3n)
+
+| Documento | Enlace |
+|-----------|--------|
+| Documentación del proyecto | [Documentación del proyecto.docx](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documentaci%C3%B3nn%20del%20proyecto.docx) |
+| Esquema SQL (MySQL) | [mano-a-mano-esquemaDB.sql](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/mano-a-mano-esquemaDB.sql) |
+| Diagrama DER (imagen) | [Diagrama entidad-relación (DER).png](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Diagrama%20entidad-relaci%C3%B3n%20(DER).png) |
+| Modelo relacional (imagen) | [Modelo relacional.png](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Modelo%20relacional.png) |
+| Diagrama de clases (imagen) | [Diagrama de clases.png](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Diagrama%20de%20clases.png) |
+| Documento técnico Sprint 2 | [Documento Técnico Sprint 2.docx](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documento%20T%C3%A9cnico%20Sprint%202.docx) |
+| Capturas del sistema | [Carpeta Capturas del sistema](https://github.com/devcordoba/mano-a-mano/tree/main/Documentaci%C3%B3n/Capturas%20del%20sistema/) |
+| Evidencias de pruebas funcionales | [Carpeta Evidencias](https://github.com/devcordoba/mano-a-mano/tree/main/Documentaci%C3%B3n/Evidencias%20de%20pruebas%20funcionales/) |
+| Wiki del proyecto | [Wiki](https://github.com/devcordoba/mano-a-mano/wiki) |
+| Registro de ceremonias Scrum | [Registro de ceremonias](https://github.com/devcordoba/mano-a-mano/wiki/Registro-de-ceremonias) |
+
 ---

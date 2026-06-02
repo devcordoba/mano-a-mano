@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+
+.mam-card {
+  border-color: var(--mam-border, #dee2e6);
+}
