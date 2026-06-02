@@ -1,0 +1,86 @@
+<section class="container py-5 mam-auth-wrap" aria-labelledby="login-title">
+  <h1 id="login-title" class="h3 fw-bold mb-4 mam-title">Iniciar sesión</h1>
+
+  @if (sesionExpirada()) {
+    <p class="alert alert-warning small mb-3" role="status">
+      Tu sesión expiró. Volvé a iniciar sesión para continuar.
+    </p>
+  }
+
+  @if (auth.isLoggedIn()) {
+    <p class="alert alert-info small mb-3" role="status">
+      Sesión activa como <strong>{{ auth.displayLabel() }}</strong>.
+      Si entrás con otro usuario, se reemplazará la sesión actual.
+      <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="auth.logout()">
+        Salir
+      </button>
+    </p>
+  }
+
+  <section class="mam-auth-login" aria-labelledby="login-form-title">
+    <h2 id="login-form-title" class="visually-hidden">Formulario de acceso</h2>
+    @if (errorLogin()) {
+      <p class="alert alert-danger small mb-3" role="alert">{{ errorLogin() }}</p>
+    }
+    <app-mam-card>
+      <form [formGroup]="formularioLogin" (ngSubmit)="enviar()">
+        <div class="mb-3">
+          <label class="form-label small" for="login-usuario">Usuario</label>
+          <input
+            id="login-usuario"
+            class="form-control"
+            autocomplete="username"
+            [formControl]="formularioLogin.controls.username"
+            maxlength="150"
+          />
+          @if (errorUsuario()) {
+            <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorUsuario() }}</p>
+          }
+        </div>
+        <div class="mb-3">
+          <label class="form-label small" for="login-contrasena">Contraseña</label>
+          <input
+            id="login-contrasena"
+            type="password"
+            class="form-control"
+            autocomplete="current-password"
+            [formControl]="formularioLogin.controls.password"
+            maxlength="128"
+          />
+          @if (errorPassword()) {
+            <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorPassword() }}</p>
+          }
+        </div>
+        <app-mam-button type="submit" [disabled]="enviandoLogin()" extraClass="w-100">
+          @if (enviandoLogin()) {
+            Entrando…
+          } @else {
+            Entrar
+          }
+        </app-mam-button>
+      </form>
+    </app-mam-card>
+  </section>
+
+  <p class="mam-auth-bridge">- ó crear cuenta -</p>
+
+  <section class="mam-auth-register-wrap" aria-labelledby="registro-login-titulo">
+    @defer (on viewport) {
+      <app-mam-card>
+        <h2 id="registro-login-titulo" class="h6 fw-bold mb-1 text-center">Registrarse</h2>
+        <p class="text-muted small text-center mb-3">Gratis. Sin complicaciones.</p>
+        <app-registro-formulario
+          [usarMamButton]="true"
+          mensajeExito="Cuenta creada. Ya podés iniciar sesión arriba."
+          (registroExitoso)="onRegistroExitoso($event)"
+        />
+      </app-mam-card>
+    } @placeholder {
+      <p class="text-muted small text-center">Cargando registro…</p>
+    }
+  </section>
+
+  <p class="mam-auth-back">
+    <a routerLink="/inicio" class="small">Volver al inicio</a>
+  </p>
+</section>

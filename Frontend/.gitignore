@@ -1,41 +1,42 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+Backend/__pycache__/
+Backend/.venv
+Backend/*.pyc
+Backend/db.sqlite3
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+**/.env
+!**/.env_modelo
 
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+**/.vscode/
+**/.editorconfig
 
-# Visual Studio Code (no versionar; no es parte de Angular ni Django)
-.vscode/
-.history/*
+**/.angular/
+**/package-lock.json
 
-# EditorConfig (convenciones locales; no versionar)
-.editorconfig
+**/__pycache__/
+**/*.py[cod]
+**/.mypy_cache/
+**/.ruff_cache/
+**/.pytest_cache/
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+**/node_modules/
+**/.npm/
+**/.pnpm-store/
+**/.yarn/cache/
+**/.cache/
+**/.angular/cache/
 
-# System files
+tmp/
+temp/
+**/*.tmp
+**/*.swp
+**/*.swo
+**/*.log
+
+**/.idea/
 .DS_Store
 Thumbs.db
+**/.venv

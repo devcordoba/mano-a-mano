@@ -1,0 +1,193 @@
+<section aria-labelledby="publicar-heading">
+<h2 id="publicar-heading" class="h5 fw-semibold mb-3">Publicar convocatoria</h2>
+
+@if (data.misOrganizaciones().length === 0) {
+  <p class="alert alert-warning small">
+    Necesitás una ficha en <strong>Mis organizaciones</strong> antes de publicar.
+    <a routerLink="/panel/mis-organizaciones" class="btn btn-link btn-sm p-0 align-baseline">
+      Ir a Mis organizaciones
+    </a>
+  </p>
+} @else {
+  <div class="mb-3">
+    <label class="form-label small fw-semibold" for="select-organizacion-publicar">Organización</label>
+    <select
+      id="select-organizacion-publicar"
+      class="form-select form-select-sm mam-select-narrow"
+      [value]="data.idOrganizacionPublicar() ?? ''"
+      (change)="oportunidades.onCambioSelectOrganizacionPublicar($event)"
+    >
+      @for (organizacion of data.misOrganizaciones(); track organizacion.id) {
+        <option [value]="organizacion.id">{{ organizacion.nombre_publico }}</option>
+      }
+    </select>
+  </div>
+}
+
+<article class="card border-2 mam-form-card mt-4">
+  <div class="card-body">
+    <h3 class="h6 fw-bold">
+      @if (oportunidades.oportunidadEditandoId() !== null) {
+        Editar convocatoria
+      } @else {
+        Nueva oportunidad
+      }
+    </h3>
+    @if (oportunidades.organizacionParaPublicar() === null) {
+      <p class="small text-warning">Elegí una organización arriba o creá una en Mis organizaciones.</p>
+    }
+    <form [formGroup]="oportunidades.oportunidadForm" (ngSubmit)="oportunidades.guardarOportunidad()">
+      <div class="mb-2">
+        <app-mam-input-imagen
+          inputId="oportunidad-imagen"
+          [formControl]="oportunidades.oportunidadForm.controls.imagen"
+          (previewUrlChange)="oportunidades.onImagenPreviewUrl($event)"
+        />
+        <div class="mam-opp-preview-wrap mt-2 border">
+          <div
+            [class]="'mam-feed-thumb-placeholder ' + claseVistaPrevia()"
+            aria-hidden="true"
+          ></div>
+        @if (oportunidades.imagenPreviewUrl()) {
+            <img [src]="oportunidades.imagenPreviewUrl()" alt="" class="mam-feed-cover mam-feed-cover-overlay" />
+          }
+        </div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="oportunidad-titulo">Título</label>
+        <input
+          id="oportunidad-titulo"
+          class="form-control form-control-sm"
+          [formControl]="oportunidades.oportunidadForm.controls.titulo"
+          maxlength="200"
+        />
+        @if (errorTitulo()) {
+          <p class="small text-danger mt-1" role="alert">{{ errorTitulo() }}</p>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="oportunidad-descripcion">Descripción</label>
+        <textarea
+          id="oportunidad-descripcion"
+          class="form-control form-control-sm"
+          rows="3"
+          [formControl]="oportunidades.oportunidadForm.controls.descripcion"
+          maxlength="8000"
+        ></textarea>
+        @if (errorDescripcion()) {
+          <p class="small text-danger mt-1" role="alert">{{ errorDescripcion() }}</p>
+        }
+      </div>
+      <div class="row g-1">
+        <div class="col-md-6 mb-2">
+          <label class="form-label small" for="oportunidad-ubicacion">Ubicación</label>
+          <input
+            id="oportunidad-ubicacion"
+            class="form-control form-control-sm"
+            [formControl]="oportunidades.oportunidadForm.controls.ubicacion"
+            maxlength="200"
+          />
+          @if (errorUbicacion()) {
+            <p class="small text-danger mt-1" role="alert">{{ errorUbicacion() }}</p>
+          }
+        </div>
+        <div class="col-md-6 mb-2">
+          <label class="form-label small" for="oportunidad-causa">Causa</label>
+          <select
+            id="oportunidad-causa"
+            class="form-select form-select-sm"
+            [formControl]="oportunidades.oportunidadForm.controls.causa"
+          >
+            <option [ngValue]="null" disabled>Elegí una causa</option>
+            @for (causa of data.causasCatalogo(); track causa.id) {
+              <option [ngValue]="causa.id">{{ causa.nombre }}</option>
+            }
+          </select>
+          @if (errorCausa()) {
+            <p class="small text-danger mt-1" role="alert">{{ errorCausa() }}</p>
+          }
+        </div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="oportunidad-tipo-actividad">Tipo de actividad</label>
+        <select
+          id="oportunidad-tipo-actividad"
+          class="form-select form-select-sm"
+          [formControl]="oportunidades.oportunidadForm.controls.tipo_actividad"
+        >
+          <option [ngValue]="null" disabled>Elegí un tipo de actividad</option>
+          @for (tipoActividad of data.tiposActividadCatalogo(); track tipoActividad.id) {
+            <option [ngValue]="tipoActividad.id">{{ tipoActividad.nombre }}</option>
+          }
+        </select>
+        @if (errorTipoActividad()) {
+          <p class="small text-danger mt-1" role="alert">{{ errorTipoActividad() }}</p>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="oportunidad-disponibilidad">Disponibilidad requerida</label>
+        <input
+          id="oportunidad-disponibilidad"
+          class="form-control form-control-sm"
+          [formControl]="oportunidades.oportunidadForm.controls.disponibilidad"
+          maxlength="200"
+        />
+        @if (errorDisponibilidad()) {
+          <p class="small text-danger mt-1" role="alert">{{ errorDisponibilidad() }}</p>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="oportunidad-requisitos">Requisitos</label>
+        <textarea
+          id="oportunidad-requisitos"
+          class="form-control form-control-sm"
+          rows="2"
+          [formControl]="oportunidades.oportunidadForm.controls.requisitos"
+          maxlength="4000"
+        ></textarea>
+      </div>
+      <div class="row g-1">
+        <div class="col-4 mb-2">
+          <label class="form-label small" for="oportunidad-cupos">Cupos</label>
+          <input
+            id="oportunidad-cupos"
+            type="number"
+            class="form-control form-control-sm"
+            [formControl]="oportunidades.oportunidadForm.controls.cupos"
+          />
+          @if (errorCupos()) {
+            <p class="small text-danger mt-1" role="alert">{{ errorCupos() }}</p>
+          }
+        </div>
+        <div class="col-8 mb-2">
+          <label class="form-label small" for="oportunidad-fecha-actividad">Fecha actividad (opcional)</label>
+          <input
+            id="oportunidad-fecha-actividad"
+            type="date"
+            class="form-control form-control-sm"
+            [formControl]="oportunidades.oportunidadForm.controls.fecha_actividad"
+          />
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button
+          class="btn btn-sm btn-primary mam-btn-primary"
+          type="submit"
+          [disabled]="oportunidades.organizacionParaPublicar() === null"
+        >
+          @if (oportunidades.oportunidadEditandoId() !== null) {
+            Guardar cambios
+          } @else {
+            Publicar
+          }
+        </button>
+        @if (oportunidades.oportunidadEditandoId() !== null) {
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="oportunidades.cancelarEdicionOportunidad()">
+            Cancelar edición
+          </button>
+        }
+      </div>
+    </form>
+  </div>
+</article>
+</section>

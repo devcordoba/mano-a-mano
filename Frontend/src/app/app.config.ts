@@ -1,9 +1,33 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
+import {
+  ApplicationConfig,
+  inject,
+  provideZonelessChangeDetection,
+} from '@angular/core';
+import {
+  RedirectCommand,
+  Router,
+  provideRouter,
+  withComponentInputBinding,
+  withNavigationErrorHandler,
+} from '@angular/router';
+import { authTokenInterceptor } from './core/interceptors/auth-token-interceptor';
+import { httpErrorInterceptor } from './core/interceptors/http-error-interceptor';
+import { provideAuthBootstrap } from './core/auth/auth-bootstrap';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideHttpClient(withInterceptors([authInterceptor])), provideRouter(routes)],
+  providers: [
+    provideZonelessChangeDetection(),
+    provideHttpClient(withInterceptors([authTokenInterceptor, httpErrorInterceptor])),
+    provideAuthBootstrap(),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withNavigationErrorHandler(() => {
+        const router = inject(Router);
+        return new RedirectCommand(router.parseUrl('/error-navegacion'));
+      }),
+    ),
+  ],
 };
