@@ -1,0 +1,28 @@
+<section aria-labelledby="postulaciones-heading">
+  <h2 id="postulaciones-heading" class="h5 fw-semibold mb-3">Mis postulaciones</h2>
+  @for (item of items(); track item.postulacion.id) {
+    <article class="card mam-feed-card mb-3 border-0 shadow-sm">
+      <div class="row g-0 align-items-center">
+        <div class="col-md-3 mam-feed-strip-secondary p-3 text-center text-white">
+          <span class="small d-block">Estado</span>
+          <strong>{{ item.estadoLegible }}</strong>
+        </div>
+        <div class="col-md-9">
+          <div class="card-body">
+            <h3 class="h6 mb-1">{{ item.tituloOportunidad }}</h3>
+            <p class="small text-muted mb-0">Enviado el {{ item.postulacion.created_at | date: 'short' }}</p>
+            <a
+              routerLink="/panel/mensajes"
+              class="btn btn-sm mam-btn-secondary mt-2"
+              (click)="mensajes.abrirHiloVoluntario(item.postulacion)"
+            >
+              Escribir a la organización
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+  } @empty {
+    <p class="text-muted">Todavía no te postulaste a ninguna oportunidad.</p>
+  }
+</section>
