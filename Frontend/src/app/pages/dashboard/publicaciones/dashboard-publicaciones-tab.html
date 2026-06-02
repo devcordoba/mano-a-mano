@@ -1,0 +1,48 @@
+<section aria-labelledby="publicaciones-heading">
+  <h2 id="publicaciones-heading" class="h5 fw-semibold mb-3">Mis publicaciones</h2>
+  @for (oportunidad of data.misOportunidades(); track oportunidad.id) {
+    <article class="card mam-feed-card mam-pub-card mb-3 border-0 shadow-sm">
+      <div class="card-body">
+        <header class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+          <div class="flex-grow-1 min-w-0">
+            <span class="mam-pub-status-badge">
+              @if (oportunidad.activa) {
+                Activa
+              } @else {
+                Pausada
+              }
+            </span>
+            <h3 class="h6 mb-1">{{ oportunidad.titulo }}</h3>
+            <p class="small text-muted mb-0">{{ oportunidad.ubicacion }} · Cupos: {{ oportunidad.cupos }}</p>
+          </div>
+          <nav class="mam-pub-actions-row" aria-label="Acciones sobre la publicación">
+            <button type="button" class="btn btn-sm mam-pub-action-btn" (click)="oportunidades.toggleActiva(oportunidad)">
+              @if (oportunidad.activa) {
+                Pausar
+              } @else {
+                Activar
+              }
+            </button>
+            <a
+              routerLink="/panel/publicar"
+              class="btn btn-sm mam-pub-action-btn"
+              (click)="oportunidades.prepararEdicionOportunidad(oportunidad)"
+            >
+              Editar
+            </a>
+            <button
+              type="button"
+              class="btn btn-sm mam-pub-action-btn mam-pub-action-btn-danger"
+              (click)="oportunidades.eliminarOportunidad(oportunidad.id)"
+            >
+              Eliminar
+            </button>
+          </nav>
+        </header>
+        <p class="small mb-0 text-secondary">{{ oportunidad.descripcion }}</p>
+      </div>
+    </article>
+  } @empty {
+    <p class="text-muted">No hay publicaciones en tus organizaciones todavía.</p>
+  }
+</section>

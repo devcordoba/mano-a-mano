@@ -1,6 +1,26 @@
 from django.contrib import admin
 
-from .models import Mensaje, OportunidadVoluntariado, Organizacion, PerfilUsuario, Postulacion
+from .models import (
+    CausaVoluntariado,
+    Mensaje,
+    OportunidadVoluntariado,
+    Organizacion,
+    PerfilUsuario,
+    Postulacion,
+    TipoActividad,
+)
+
+
+@admin.register(CausaVoluntariado)
+class CausaVoluntariadoAdmin(admin.ModelAdmin):
+    list_display = ("id", "codigo", "nombre")
+    search_fields = ("codigo", "nombre")
+
+
+@admin.register(TipoActividad)
+class TipoActividadAdmin(admin.ModelAdmin):
+    list_display = ("id", "codigo", "nombre")
+    search_fields = ("codigo", "nombre")
 
 
 @admin.register(PerfilUsuario)
@@ -24,6 +44,7 @@ class OportunidadVoluntariadoAdmin(admin.ModelAdmin):
         "organizacion",
         "ubicacion",
         "causa",
+        "tipo_actividad",
         "activa",
         "created_at",
     )
