@@ -1,9 +1,4 @@
--- Mano a Mano — esquema MySQL 8 (referencia)
--- Fuente de verdad en runtime: python manage.py migrate (app api, migraciones 0001–0004)
---
--- Requisito previo: tabla auth_user (Django contrib.auth; se crea con migrate de django.contrib.auth)
--- Autenticación API: JWT stateless (PyJWT). NO hay tabla de tokens ni sesiones en BD.
--- Migración 0004_drop_authtoken_table elimina authtoken_token legacy si existía (DRF Token antiguo).
+-- Mano a Mano — esquema SQL
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -30,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `tipo_actividad` (
 
 CREATE TABLE IF NOT EXISTS `perfil_usuario` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `rol` varchar(3) NOT NULL DEFAULT 'VOL',
+  `rol` ENUM('VOL','ORG') NOT NULL DEFAULT 'VOL',
   `telefono` varchar(40) NOT NULL DEFAULT '',
   `intereses_causas` varchar(255) NOT NULL DEFAULT '',
   `disponibilidad_resumen` varchar(255) NOT NULL DEFAULT '',
@@ -91,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `oportunidad_voluntariado` (
 
 CREATE TABLE IF NOT EXISTS `postulacion` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `estado` varchar(3) NOT NULL DEFAULT 'PEN',
+  `estado` ENUM('PEN','ACE','REC','CAN') NOT NULL DEFAULT 'PEN',
   `comentario` longtext NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
