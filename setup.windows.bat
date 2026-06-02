@@ -134,7 +134,7 @@ exit /b 0
 
 :showLocalUrls
 echo Frontend: http://localhost:4200
-echo Backend:  http://localhost:8000/api/health/
+echo Backend:  http://localhost:8000/api/
 exit /b 0
 
 :mysqlDataVolumeName
