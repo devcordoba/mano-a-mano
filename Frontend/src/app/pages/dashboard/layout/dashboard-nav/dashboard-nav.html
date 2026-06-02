@@ -1,0 +1,16 @@
+<nav class="dashboard-nav" aria-label="Secciones del panel">
+  <ul class="nav nav-pills flex-wrap gap-2 mam-pills">
+    @for (item of items(); track item.id) {
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [routerLink]="item.routerLink"
+          routerLinkActive="active"
+          [attr.id]="item.id + '-trigger'"
+        >
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
