@@ -1,0 +1,28 @@
+<section class="mam-hero text-center text-lg-start" aria-labelledby="inicio-titulo">
+  <div class="container py-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <p class="text-uppercase small fw-bold mam-accent-label">Voluntarios · Córdoba, Argentina</p>
+        <h1 id="inicio-titulo" class="display-5 fw-bold mam-hero-title">
+          Encontrá tu próxima causa y sumate a quienes hacen la diferencia
+        </h1>
+        <p class="lead mam-hero-lead">
+          Mano a Mano te conecta con organizaciones que buscan voluntarios para generar impacto positivo. Explorá causas que te inspiren, postulate fácilmente y participá en iniciativas que hacen la diferencia.
+        </p>
+        @if (auth.isLoggedIn()) {
+          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Ir al panel</a>
+        } @else {
+          <a routerLink="/panel" class="btn btn-lg mam-btn-primary me-2 mb-2">Explorar oportunidades</a>
+        }
+        <a routerLink="/nosotros" class="btn btn-lg mam-btn-secondary mb-2">Quiénes somos</a>
+      </div>
+      <aside class="col-lg-5" id="registro" aria-labelledby="registro-titulo">
+        <app-mam-card>
+          <h2 id="registro-titulo" class="h5 fw-bold mb-1">Crear cuenta</h2>
+          <p class="text-muted small mb-3">Gratis. Sin complicaciones.</p>
+          <app-registro-formulario [compacto]="true" />
+        </app-mam-card>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.mam-navbar {
+  background: linear-gradient(90deg, var(--mam-lavender) 0%, var(--mam-bg-pink) 100%);
+  border-bottom: 2px solid var(--mam-black);
+}
+
+.mam-brand-link {
+  text-decoration: none;
+}
+
+.mam-brand-logo {
+  height: 48px;
+  width: auto;
+  max-width: min(200px, 40vw);
+  object-fit: contain;
+}
+
+.mam-navbar .nav-link {
+  color: var(--mam-charcoal);
+  font-weight: 500;
+}
+
+.mam-navbar .nav-link.active {
+  color: var(--mam-blue);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.mam-nav-login {
+  border: 2px solid var(--mam-black);
+  font-weight: 600;
+  background: var(--mam-white);
+  color: var(--mam-charcoal);
+}
+
+.mam-nav-login:hover {
+  background: var(--mam-lavender);
+}
+
+.mam-nav-user-label {
+  max-width: 10rem;
+}

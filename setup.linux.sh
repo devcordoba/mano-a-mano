@@ -58,7 +58,7 @@ docker_volume_rm() {
 
 run_build() {
   ensure_env
-  compose_cmd up --build -d
+  compose_cmd up --build -d --remove-orphans
   show_local_urls
 }
 
@@ -75,19 +75,19 @@ run_build_fresh_db() {
   local vol
   vol="$(mysql_data_volume_name)"
   echo "Deteniendo contenedores..."
-  compose_cmd down
+  compose_cmd down --remove-orphans
   if docker_volume_rm "$vol"; then
     echo "Volumen MySQL eliminado: $vol (MySQL se inicializara de nuevo con Backend/.env)."
   else
     echo "No se pudo borrar el volumen '$vol' (no existia o esta en uso). Se continua igualmente."
   fi
-  compose_cmd up --build -d
+  compose_cmd up --build -d --remove-orphans
   show_local_urls
 }
 
 run_up() {
   ensure_env
-  compose_cmd up -d
+  compose_cmd up -d --remove-orphans
   show_local_urls
 }
 
@@ -103,17 +103,17 @@ run_stop() {
 
 run_down() {
   ensure_env
-  compose_cmd down
+  compose_cmd down --remove-orphans
 }
 
 show_local_urls() {
   echo "Frontend: http://localhost:4200"
-  echo "Backend:  http://localhost:8000/api/health/"
+  echo "Backend:  http://localhost:8000/api/"
 }
 
 run_up_interface() {
   ensure_env
-  compose_cmd up -d
+  compose_cmd up -d --remove-orphans
   show_local_urls
 }
 

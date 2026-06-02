@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.mam-nosotros-hero {
+  background: linear-gradient(120deg, var(--mam-lavender) 0%, var(--mam-bg-pink) 55%, var(--mam-lime-soft) 100%);
+  border-bottom: 2px solid var(--mam-black);
+}
+
+.mam-accent {
+  color: var(--mam-magenta);
+}

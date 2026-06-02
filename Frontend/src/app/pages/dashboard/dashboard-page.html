@@ -1,0 +1,26 @@
+<section class="container py-4" aria-labelledby="dashboard-title">
+  <header class="mb-0">
+    <h1 id="dashboard-title" class="h2 fw-bold mam-page-title mb-4">
+      @if (!auth.sesionReconciliada()) {
+        <span class="text-muted fs-5 fw-normal" role="status">Restaurando sesión…</span>
+      } @else if (auth.isLoggedIn()) {
+        Bienvenido, {{ auth.displayLabel() }}
+      } @else {
+        Bienvenido, visitante
+      }
+    </h1>
+  </header>
+
+  @if (data.cargando()) {
+    <p class="alert mam-alert-info" role="status">Cargando datos…</p>
+  }
+  @if (data.error()) {
+    <p class="alert alert-danger" role="alert">{{ data.error() }}</p>
+  }
+
+  <app-dashboard-layout [navItems]="dashboardNavItems" [showSidebar]="auth.sesionReconciliada() && auth.isLoggedIn()">
+    <section class="tab-content" aria-label="Contenido del panel">
+      <router-outlet />
+    </section>
+  </app-dashboard-layout>
+</section>

@@ -1,0 +1,125 @@
+<section aria-labelledby="organizaciones-heading">
+<header class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <h2 id="organizaciones-heading" class="h5 fw-semibold mb-0">Mis organizaciones</h2>
+  @if (data.misOrganizaciones().length === 0) {
+    <button type="button" class="btn btn-sm mam-btn-primary flex-shrink-0" (click)="organizaciones.nuevaOrganizacion()">
+      Nueva organización
+    </button>
+  }
+</header>
+
+@for (organizacion of data.misOrganizaciones(); track organizacion.id) {
+  <article class="card mam-feed-card mb-3 border-0 shadow-sm">
+    <div class="card-body d-flex flex-wrap justify-content-between gap-2 align-items-start">
+      <div>
+        <h3 class="h6 mb-1">{{ organizacion.nombre_publico }}</h3>
+        <p class="small text-muted mb-0">{{ organizacion.email_contacto }}</p>
+        @if (organizacion.descripcion) {
+          <p class="small mb-0 mt-1">{{ organizacion.descripcion }}</p>
+        }
+      </div>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary" (click)="organizaciones.editarOrganizacion(organizacion)">
+          Editar
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="organizaciones.eliminarOrganizacion(organizacion)">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </article>
+} @empty {
+  <p class="text-muted small mb-3">Todavía no registraste ninguna organización.</p>
+}
+
+@if (organizaciones.mostrarFormularioOrganizacion()) {
+<article class="card border-2 mam-form-card mt-4">
+  <div class="card-body">
+    <h3 class="h6 fw-bold">
+      @if (organizaciones.organizacionEditandoId() !== null) {
+        Editar organización
+      } @else {
+        Nueva organización
+      }
+    </h3>
+    <form [formGroup]="organizaciones.organizacionForm" (ngSubmit)="organizaciones.guardarOrganizacion()">
+      <div class="mb-2">
+        <label class="form-label small" for="organizacion-nombre">Nombre público</label>
+        <input
+          id="organizacion-nombre"
+          class="form-control form-control-sm"
+          [formControl]="organizaciones.organizacionForm.controls.nombre_publico"
+          maxlength="200"
+        />
+        @if (errorNombrePublico()) {
+          <div class="invalid-feedback d-block small mt-1" role="alert">{{ errorNombrePublico() }}</div>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="organizacion-email">Email de contacto</label>
+        <input
+          id="organizacion-email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          class="form-control form-control-sm"
+          [formControl]="organizaciones.organizacionForm.controls.email_contacto"
+          maxlength="254"
+        />
+        @if (errorEmailContacto()) {
+          <div class="invalid-feedback d-block small mt-1" role="alert">{{ errorEmailContacto() }}</div>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="organizacion-descripcion">Descripción</label>
+        <textarea
+          id="organizacion-descripcion"
+          class="form-control form-control-sm"
+          rows="2"
+          [formControl]="organizaciones.organizacionForm.controls.descripcion"
+          maxlength="4000"
+        ></textarea>
+        @if (errorDescripcion()) {
+          <p class="small text-danger mt-1" role="alert">{{ errorDescripcion() }}</p>
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="organizacion-telefono">Teléfono</label>
+        <input
+          id="organizacion-telefono"
+          class="form-control form-control-sm"
+          [formControl]="organizaciones.organizacionForm.controls.telefono"
+          maxlength="40"
+        />
+      </div>
+      <div class="mb-2">
+        <label class="form-label small" for="organizacion-sitio">Sitio web</label>
+        <input
+          id="organizacion-sitio"
+          type="url"
+          class="form-control form-control-sm"
+          [formControl]="organizaciones.organizacionForm.controls.sitio_web"
+          placeholder="https://… (opcional)"
+          maxlength="200"
+        />
+        @if (errorSitioWeb()) {
+          <div class="invalid-feedback d-block small mt-1" role="alert">{{ errorSitioWeb() }}</div>
+        }
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button class="btn btn-sm mam-btn-primary" type="submit">
+          @if (organizaciones.organizacionEditandoId() !== null) {
+            Guardar cambios
+          } @else {
+            Crear organización
+          }
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="organizaciones.cancelarEdicionOrganizacion()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</article>
+}
+</section>
