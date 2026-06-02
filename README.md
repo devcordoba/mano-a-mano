@@ -123,7 +123,7 @@ Carpeta en GitHub: [Documentación](https://github.com/devcordoba/mano-a-mano/tr
 
 | Documento | Enlace |
 |-----------|--------|
-| Documentación del proyecto | [Documentación del proyecto.docx](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documentaci%C3%B3nn%20del%20proyecto.docx) |
+| Documentación del proyecto | [Documentación del proyecto.docx](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Documentaci%C3%B3n%20del%20proyecto.docx) |
 | Esquema SQL (MySQL) | [mano-a-mano-esquemaDB.sql](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/mano-a-mano-esquemaDB.sql) |
 | Diagrama DER (imagen) | [Diagrama entidad-relación (DER).png](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Diagrama%20entidad-relaci%C3%B3n%20(DER).png) |
 | Modelo relacional (imagen) | [Modelo relacional.png](https://github.com/devcordoba/mano-a-mano/blob/main/Documentaci%C3%B3n/Modelo%20relacional.png) |
