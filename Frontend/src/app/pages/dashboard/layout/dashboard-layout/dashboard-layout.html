@@ -1,0 +1,8 @@
+<section class="dashboard-layout">
+  @if (showSidebar()) {
+    <app-dashboard-nav [items]="navItems()" class="dashboard-layout__nav" />
+  }
+  <section class="dashboard-layout__content">
+    <ng-content />
+  </section>
+</section>
