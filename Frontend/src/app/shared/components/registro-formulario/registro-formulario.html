@@ -1,0 +1,81 @@
+@if (mensaje()) {
+  <p class="alert alert-success small" role="status">{{ mensaje() }}</p>
+}
+@if (error()) {
+  <p class="alert alert-danger small" role="alert">{{ error() }}</p>
+}
+
+<form
+  [formGroup]="form"
+  (ngSubmit)="enviar()"
+  [class.text-start]="compacto()"
+>
+  <div [class]="compacto() ? 'mb-2' : 'mb-3'">
+    <label class="form-label small" for="registro-usuario">Nombre de usuario</label>
+    <input
+      id="registro-usuario"
+      class="form-control"
+      [formControl]="form.controls.username"
+      autocomplete="username"
+      maxlength="150"
+    />
+    @if (errorUsuario()) {
+      <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorUsuario() }}</p>
+    }
+  </div>
+  <div [class]="compacto() ? 'mb-2' : 'mb-3'">
+    <label class="form-label small" for="registro-email">Correo electrónico</label>
+    <input
+      id="registro-email"
+      type="email"
+      class="form-control"
+      [formControl]="form.controls.email"
+      autocomplete="email"
+      maxlength="254"
+    />
+    @if (errorEmail()) {
+      <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorEmail() }}</p>
+    }
+  </div>
+  <div [class]="compacto() ? 'mb-2' : 'mb-3'">
+    <label class="form-label small" for="registro-contrasena">Contraseña</label>
+    <input
+      id="registro-contrasena"
+      type="password"
+      class="form-control"
+      [formControl]="form.controls.password"
+      autocomplete="new-password"
+      maxlength="128"
+    />
+    @if (errorPassword()) {
+      <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorPassword() }}</p>
+    }
+  </div>
+  <div class="row g-2" [class]="compacto() ? '' : 'mb-3'">
+    <div [class]="compacto() ? 'col-md-6 mb-2' : 'col-6'">
+      <label class="form-label small" for="registro-nombre">Nombre</label>
+      <input id="registro-nombre" class="form-control" [formControl]="form.controls.first_name" maxlength="150" />
+    </div>
+    <div [class]="compacto() ? 'col-md-6 mb-2' : 'col-6'">
+      <label class="form-label small" for="registro-apellido">Apellido</label>
+      <input id="registro-apellido" class="form-control" [formControl]="form.controls.last_name" maxlength="150" />
+    </div>
+  </div>
+  @if (usarMamButton()) {
+    <app-mam-button type="submit" [disabled]="enviando()" extraClass="w-100">
+      @if (enviando()) {
+        Creando cuenta…
+      } @else {
+        Crear cuenta
+      }
+    </app-mam-button>
+  } @else {
+    <button type="submit" class="btn mam-btn-primary w-100 mt-2" [disabled]="enviando()">
+      @if (enviando()) {
+        Creando cuenta…
+      } @else {
+        Crear cuenta
+      }
+    </button>
+  }
+</form>

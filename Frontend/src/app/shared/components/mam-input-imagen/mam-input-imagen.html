@@ -1,0 +1,14 @@
+<label class="form-label small" [attr.for]="inputId()">Imagen de la convocatoria</label>
+<input
+  #fileInput
+  [id]="inputId()"
+  type="file"
+  class="form-control form-control-sm"
+  [accept]="accept()"
+  [disabled]="false"
+  (change)="onArchivoSeleccionado($event)"
+/>
+<p class="small mt-1 mb-0 mam-texto-azul">{{ ayuda() }}</p>
+@if (errorValidacion()) {
+  <p class="small text-danger mt-1" role="alert">{{ errorValidacion() }}</p>
+}
