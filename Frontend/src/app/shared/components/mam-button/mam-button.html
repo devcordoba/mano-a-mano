@@ -1,0 +1,12 @@
+<button
+  [type]="type()"
+  class="btn mam-btn"
+  [class.btn-primary]="variant() === 'primary'"
+  [class.mam-btn-primary]="variant() === 'primary'"
+  [class.btn-secondary]="variant() === 'secondary'"
+  [class.btn-outline-secondary]="variant() === 'outline'"
+  [class]="'btn mam-btn ' + extraClass()"
+  [disabled]="disabled()"
+>
+  <ng-content />
+</button>
