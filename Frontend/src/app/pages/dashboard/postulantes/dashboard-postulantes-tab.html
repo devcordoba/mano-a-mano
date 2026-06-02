@@ -1,0 +1,74 @@
+<section aria-labelledby="postulantes-heading">
+  <h2 id="postulantes-heading" class="h5 fw-semibold mb-3">Postulantes</h2>
+  @for (bloque of bloques(); track bloque.oportunidadId) {
+    <section class="card mam-feed-card border-2 shadow-sm mb-4 overflow-hidden" aria-labelledby="postulantes-bloque-{{ bloque.oportunidadId }}">
+      <header class="card-header py-3 px-3 border-bottom border-2 bg-light">
+        <h3 id="postulantes-bloque-{{ bloque.oportunidadId }}" class="h6 mb-0 fw-semibold text-uppercase text-muted">
+          {{ bloque.titulo }}
+        </h3>
+      </header>
+      <ul class="list-group list-group-flush">
+        @for (item of bloque.items; track item.postulacion.id) {
+          <li class="list-group-item px-3 py-3 mam-postulante-fila">
+            <div
+              class="d-flex flex-column flex-xl-row flex-xl-nowrap align-items-xl-center justify-content-xl-between gap-3"
+            >
+              <div class="flex-grow-1 min-w-0">
+                <span class="small fw-semibold text-break d-block">{{ item.nombreVoluntario }}</span>
+              </div>
+              <div
+                class="d-flex flex-wrap flex-xl-nowrap align-items-center gap-2 justify-content-xl-end flex-shrink-0 mam-postulante-toolbar"
+              >
+                @if (item.cancelada) {
+                  <span class="small text-muted mb-0 ms-xl-auto">Estado: cancelada</span>
+                } @else {
+                  <label
+                    class="small mb-0 text-muted text-nowrap"
+                    [attr.for]="'estado-postulacion-' + item.postulacion.id"
+                  >
+                    Estado
+                  </label>
+                  <select
+                    [id]="'estado-postulacion-' + item.postulacion.id"
+                    class="form-select form-select-sm mam-postulacion-estado"
+                    [value]="item.estadoSelect"
+                    (change)="postulaciones.onEstadoSelectNativeChange(item.postulacion, $event)"
+                    [disabled]="!item.puedeGestionar"
+                  >
+                    <option value="PEN">Pendiente</option>
+                    <option value="ACE">Aceptada</option>
+                    <option value="REC">Rechazada</option>
+                  </select>
+                  @if (item.puedeGestionar) {
+                    <button
+                      type="button"
+                      class="btn btn-sm mam-btn-secondary mam-post-guardar-btn text-nowrap"
+                      (click)="postulaciones.guardarEstadoPostulacion(item.postulacion)"
+                      [disabled]="item.botonGuardarDeshabilitado"
+                      [attr.title]="item.tituloBotonGuardar"
+                    >
+                      Guardar
+                    </button>
+                  }
+                  @if (item.muestraBotonEscribir) {
+                    <a
+                      routerLink="/panel/mensajes"
+                      class="btn btn-sm mam-btn-primary text-nowrap"
+                      (click)="mensajes.abrirHiloOrganizacion(item.postulacion, bloque.oportunidadId)"
+                    >
+                      Escribir al postulante
+                    </a>
+                  }
+                }
+              </div>
+            </div>
+          </li>
+        } @empty {
+          <li class="list-group-item text-muted small py-3">Sin postulaciones aún.</li>
+        }
+      </ul>
+    </section>
+  } @empty {
+    <p class="text-muted small">No hay convocatorias con postulantes todavía.</p>
+  }
+</section>
