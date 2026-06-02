@@ -1,0 +1,76 @@
+<section aria-labelledby="feed-heading">
+  <h2 id="feed-heading" class="h5 fw-semibold mb-2">Oportunidades</h2>
+  <section class="mam-feed-search" aria-label="Buscar oportunidades">
+    <label class="form-label small fw-semibold mb-2" for="feed-busqueda">Buscar oportunidades</label>
+    <div class="mam-feed-search-wrap">
+      <span class="mam-feed-search-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3.5-3.5" />
+        </svg>
+      </span>
+      <input
+        id="feed-busqueda"
+        type="search"
+        class="form-control mam-feed-search-input"
+        placeholder="Título, ubicación, causa…"
+        [value]="data.busquedaFeed()"
+        (input)="onBusquedaFeedInput($event)"
+        autocomplete="off"
+      />
+    </div>
+  </section>
+  @if (data.cargando()) {
+    <p class="text-muted" role="status">Cargando oportunidades…</p>
+  } @else if (!oportunidadesFeedView().length) {
+    @if (data.busquedaFeed().trim()) {
+      <p class="text-muted">No hay oportunidades que coincidan con tu búsqueda.</p>
+    } @else {
+      <p class="text-muted">No hay oportunidades activas o aún no hay datos.</p>
+    }
+  }
+  @for (item of oportunidadesFeedView(); track item.oportunidad.id) {
+    <article class="card mam-feed-card mb-3 border-0 shadow-sm overflow-hidden">
+      <div class="d-flex flex-column flex-md-row align-items-stretch">
+        <figure class="mam-feed-thumb flex-shrink-0 mb-0">
+          <div
+            [class]="'mam-feed-thumb-placeholder ' + item.clasePaleta"
+            aria-hidden="true"
+          ></div>
+          @if (item.imagenUrl) {
+            <img
+              [src]="item.imagenUrl"
+              alt=""
+              class="mam-feed-cover mam-feed-cover-overlay"
+              loading="lazy"
+            />
+          }
+        </figure>
+        <div class="card-body mam-feed-card-body flex-grow-1 d-flex flex-column">
+          <header class="mam-feed-card-header mb-2">
+            <div class="mam-feed-card-main">
+              <h3 class="h5 mb-1">{{ item.oportunidad.titulo }}</h3>
+              <p class="small text-muted mb-1">{{ item.organizacionNombre }} · {{ item.oportunidad.ubicacion }}</p>
+              <p class="mb-0 text-secondary small">
+                {{ item.tipoActividadNombre }} · {{ item.oportunidad.disponibilidad }} · Cupos: {{ item.oportunidad.cupos }}
+              </p>
+            </div>
+            @if (item.puedePostularse) {
+              <button
+                type="button"
+                class="btn btn-sm mam-btn-primary mam-feed-postular-btn"
+                (click)="onPostular(item.oportunidad.id)"
+              >
+                Postularme
+              </button>
+            }
+          </header>
+          <p class="mb-0 small flex-grow-1">{{ item.oportunidad.descripcion }}</p>
+          @if (auth.isLoggedIn() && item.yaPostulo) {
+            <p class="small text-primary fw-semibold mt-2 mb-0">Ya te has postulado a esta propuesta.</p>
+          }
+        </div>
+      </div>
+    </article>
+  }
+</section>
