@@ -45,3 +45,14 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.mam-auth-registro-link {
+  color: var(--mam-magenta);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mam-auth-registro-link:hover {
+  color: var(--mam-blue);
+}

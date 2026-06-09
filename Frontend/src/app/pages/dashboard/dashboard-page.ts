@@ -32,17 +32,25 @@ export class DashboardPage {
   readonly #destroyRef = inject(DestroyRef);
 
   protected readonly dashboardNavItems: DashboardNavItem[] = [
-    { id: 'dashboard-tab-feed', label: 'Oportunidades', routerLink: '/panel/feed' },
-    { id: 'dashboard-tab-postulaciones', label: 'Mis postulaciones', routerLink: '/panel/postulaciones' },
-    { id: 'dashboard-tab-publicaciones', label: 'Mis publicaciones', routerLink: '/panel/publicaciones' },
-    { id: 'dashboard-tab-postulantes', label: 'Postulantes', routerLink: '/panel/postulantes' },
-    { id: 'dashboard-tab-mensajes', label: 'Mensajes', routerLink: '/panel/mensajes' },
     {
-      id: 'dashboard-tab-mis-organizaciones',
-      label: 'Mis organizaciones',
-      routerLink: '/panel/mis-organizaciones',
+      id: 'grupo-oportunidades',
+      label: 'Oportunidades',
+      children: [
+        { id: 'dashboard-tab-feed', label: 'Explorar', routerLink: '/panel/feed' },
+        { id: 'dashboard-tab-postulaciones', label: 'Mis postulaciones', routerLink: '/panel/postulaciones' },
+      ],
     },
-    { id: 'dashboard-tab-publicar', label: 'Publicar oferta', routerLink: '/panel/publicar' },
+    {
+      id: 'grupo-organizacion',
+      label: 'Mi organización',
+      children: [
+        { id: 'dashboard-tab-mis-organizaciones', label: 'Mis organizaciones', routerLink: '/panel/mis-organizaciones' },
+        { id: 'dashboard-tab-publicaciones', label: 'Mis publicaciones', routerLink: '/panel/publicaciones' },
+        { id: 'dashboard-tab-postulantes', label: 'Postulantes', routerLink: '/panel/postulantes' },
+        { id: 'dashboard-tab-publicar', label: 'Publicar oferta', routerLink: '/panel/publicar' },
+      ],
+    },
+    { id: 'dashboard-tab-mensajes', label: 'Mensajes', routerLink: '/panel/mensajes' },
   ];
 
   constructor() {
