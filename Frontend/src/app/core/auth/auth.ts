@@ -117,9 +117,25 @@ export class AuthService {
   }
 
   logout(): void {
-    this.#limpiarSesionLocal();
     const destino = this.#router.url.startsWith('/panel') ? '/panel/feed' : '/inicio';
-    void this.#router.navigateByUrl(destino);
+    const token = leerToken();
+
+    if (token === null) {
+      this.#limpiarSesionLocal();
+      void this.#router.navigateByUrl(destino);
+      return;
+    }
+
+    this.#api.http
+      .post<{ detail: string }>(`${this.#api.apiUrl}/auth/logout/`, {})
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => {
+          this.#limpiarSesionLocal();
+          void this.#router.navigateByUrl(destino);
+        }),
+      )
+      .subscribe();
   }
 
   #fetchMe(): Observable<AuthUser | null> {
