@@ -163,7 +163,7 @@ export class AuthService {
       }),
       map((respuesta) => respuesta.user),
       catchError((err: unknown) => {
-        if (err instanceof HttpErrorResponse && err.status === 401) {
+        if (err instanceof HttpErrorResponse && (err.status === 401 || err.status === 403)) {
           borrarToken();
         }
         this.#userSignal.set(null);
