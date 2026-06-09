@@ -1,5 +1,5 @@
 <section class="container py-5 mam-auth-wrap" aria-labelledby="login-title">
-  <h1 id="login-title" class="h3 fw-bold mb-4 mam-title">Iniciar sesión</h1>
+  <h1 id="login-title" class="h3 fw-bold mb-4 mam-title text-center">Iniciar sesión</h1>
 
   @if (sesionExpirada()) {
     <p class="alert alert-warning small mb-3" role="status">
@@ -51,21 +51,28 @@
             <p class="invalid-feedback d-block small mt-1" role="alert">{{ errorPassword() }}</p>
           }
         </div>
-        <app-mam-button type="submit" [disabled]="enviandoLogin()" extraClass="w-100">
-          @if (enviandoLogin()) {
-            Entrando…
-          } @else {
-            Entrar
-          }
-        </app-mam-button>
+        <div class="d-flex justify-content-end">
+          <app-mam-button type="submit" [disabled]="enviandoLogin()">
+            @if (enviandoLogin()) {
+              Entrando…
+            } @else {
+              Entrar
+            }
+          </app-mam-button>
+        </div>
       </form>
     </app-mam-card>
   </section>
 
-  <p class="mam-auth-bridge">- ó crear cuenta -</p>
+  <p class="mam-auth-bridge">
+    ¿No tenés usuario?
+    <button type="button" class="btn btn-link btn-sm p-0 align-baseline mam-auth-registro-link" (click)="mostrarRegistro.set(!mostrarRegistro())">
+      Registrate
+    </button>
+  </p>
 
-  <section class="mam-auth-register-wrap" aria-labelledby="registro-login-titulo">
-    @defer (on viewport) {
+  @if (mostrarRegistro()) {
+    <section class="mam-auth-register-wrap" aria-labelledby="registro-login-titulo">
       <app-mam-card>
         <h2 id="registro-login-titulo" class="h6 fw-bold mb-1 text-center">Registrarse</h2>
         <p class="text-muted small text-center mb-3">Gratis. Sin complicaciones.</p>
@@ -75,10 +82,8 @@
           (registroExitoso)="onRegistroExitoso($event)"
         />
       </app-mam-card>
-    } @placeholder {
-      <p class="text-muted small text-center">Cargando registro…</p>
-    }
-  </section>
+    </section>
+  }
 
   <p class="mam-auth-back">
     <a routerLink="/inicio" class="small">Volver al inicio</a>
