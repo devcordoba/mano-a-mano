@@ -46,6 +46,7 @@ export class LoginPage {
   protected readonly sesionExpirada = computed(() => this.sesion() === 'expirada');
   protected readonly enviandoLogin = signal(false);
   protected readonly errorLogin = signal<string | null>(null);
+  protected readonly mostrarRegistro = signal(false);
 
   protected readonly formularioLogin = this.#formBuilder.group({
     username: this.#formBuilder.control('', {
@@ -116,5 +117,6 @@ export class LoginPage {
 
   protected onRegistroExitoso(evento: RegistroExitosoEvent): void {
     this.formularioLogin.patchValue({ username: evento.username });
+    this.mostrarRegistro.set(false);
   }
 }

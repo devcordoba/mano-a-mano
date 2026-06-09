@@ -23,6 +23,8 @@ export class DashboardFacade {
   #idSesionCargada: number | null | undefined = undefined;
 
   readonly #busquedaFeed = signal('');
+  readonly #filtroCausa = signal<number | null>(null);
+  readonly #filtroTipoActividad = signal<number | null>(null);
   readonly #causasCatalogo = signal<CatalogoItem[]>([]);
   readonly #tiposActividadCatalogo = signal<CatalogoItem[]>([]);
   readonly #cargando = signal(false);
@@ -37,6 +39,8 @@ export class DashboardFacade {
   readonly #idOrganizacionPublicar = signal<number | null>(null);
 
   readonly busquedaFeed: Signal<string> = this.#busquedaFeed.asReadonly();
+  readonly filtroCausa: Signal<number | null> = this.#filtroCausa.asReadonly();
+  readonly filtroTipoActividad: Signal<number | null> = this.#filtroTipoActividad.asReadonly();
   readonly causasCatalogo: Signal<CatalogoItem[]> = this.#causasCatalogo.asReadonly();
   readonly tiposActividadCatalogo: Signal<CatalogoItem[]> = this.#tiposActividadCatalogo.asReadonly();
   readonly cargando: Signal<boolean> = this.#cargando.asReadonly();
@@ -60,6 +64,16 @@ export class DashboardFacade {
       feed = feed.filter((oportunidad) => !idsMisOrganizaciones.has(oportunidad.organizacion));
     }
 
+    const causaId = this.#filtroCausa();
+    if (causaId !== null) {
+      feed = feed.filter((oportunidad) => oportunidad.causa === causaId);
+    }
+
+    const tipoId = this.#filtroTipoActividad();
+    if (tipoId !== null) {
+      feed = feed.filter((oportunidad) => oportunidad.tipo_actividad === tipoId);
+    }
+
     const textoBusqueda = this.#busquedaFeed().trim();
     if (textoBusqueda === '') {
       return feed;
@@ -70,6 +84,20 @@ export class DashboardFacade {
 
   setBusquedaFeed(valor: string): void {
     this.#busquedaFeed.set(valor);
+  }
+
+  setFiltroCausa(id: number | null): void {
+    this.#filtroCausa.set(id);
+  }
+
+  setFiltroTipoActividad(id: number | null): void {
+    this.#filtroTipoActividad.set(id);
+  }
+
+  limpiarFiltrosFeed(): void {
+    this.#filtroCausa.set(null);
+    this.#filtroTipoActividad.set(null);
+    this.#busquedaFeed.set('');
   }
 
   reportarError(mensaje: string | null): void {

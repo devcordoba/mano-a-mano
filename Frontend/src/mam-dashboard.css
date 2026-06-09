@@ -2,26 +2,25 @@
   color: var(--mam-charcoal);
 }
 
-.mam-pills .nav-link {
-  color: var(--mam-charcoal);
-  border: 2px solid var(--mam-black);
-  border-radius: 999px;
-  background: var(--mam-white);
-  white-space: nowrap;
-}
-
-.mam-pills .nav-link:hover {
-  background: var(--mam-lavender);
-}
-
-.mam-pills .nav-link.active {
-  background: var(--mam-magenta);
-  color: var(--mam-white);
-  border-color: var(--mam-black);
-}
 
 .mam-feed-card {
   border: 2px solid var(--mam-black) !important;
+}
+
+.mam-feed-expanded {
+  border-color: rgba(26, 26, 26, 0.12) !important;
+}
+
+.mam-feed-ver-mas-btn {
+  color: var(--mam-blue);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.mam-feed-ver-mas-btn:hover {
+  color: var(--mam-magenta);
+  text-decoration: underline;
 }
 
 .mam-feed-search {

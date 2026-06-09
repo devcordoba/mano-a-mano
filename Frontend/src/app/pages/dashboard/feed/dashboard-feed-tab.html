@@ -1,30 +1,71 @@
 <section aria-labelledby="feed-heading">
-  <h2 id="feed-heading" class="h5 fw-semibold mb-2">Oportunidades</h2>
-  <section class="mam-feed-search" aria-label="Buscar oportunidades">
-    <label class="form-label small fw-semibold mb-2" for="feed-busqueda">Buscar oportunidades</label>
-    <div class="mam-feed-search-wrap">
-      <span class="mam-feed-search-icon" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round">
-          <circle cx="11" cy="11" r="7" />
-          <path d="M20 20l-3.5-3.5" />
-        </svg>
-      </span>
-      <input
-        id="feed-busqueda"
-        type="search"
-        class="form-control mam-feed-search-input"
-        placeholder="Título, ubicación, causa…"
-        [value]="data.busquedaFeed()"
-        (input)="onBusquedaFeedInput($event)"
-        autocomplete="off"
-      />
+  <h2 id="feed-heading" class="h5 fw-semibold mb-3">Oportunidades</h2>
+
+  <section class="mam-feed-filters mb-3" aria-label="Filtros">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-semibold mb-1" for="filtro-causa">Causa</label>
+        <select
+          id="filtro-causa"
+          class="form-select form-select-sm"
+          [value]="data.filtroCausa() ?? ''"
+          (change)="onFiltroCausa($event)"
+        >
+          <option value="">Todas las causas</option>
+          @for (causa of data.causasCatalogo(); track causa.id) {
+            <option [value]="causa.id">{{ causa.nombre }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-12 col-sm-6 col-md-4">
+        <label class="form-label small fw-semibold mb-1" for="filtro-tipo">Tipo de actividad</label>
+        <select
+          id="filtro-tipo"
+          class="form-select form-select-sm"
+          [value]="data.filtroTipoActividad() ?? ''"
+          (change)="onFiltroTipoActividad($event)"
+        >
+          <option value="">Todos los tipos</option>
+          @for (tipo of data.tiposActividadCatalogo(); track tipo.id) {
+            <option [value]="tipo.id">{{ tipo.nombre }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label small fw-semibold mb-1" for="feed-busqueda">Buscar</label>
+        <div class="mam-feed-search-wrap">
+          <span class="mam-feed-search-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+          </span>
+          <input
+            id="feed-busqueda"
+            type="search"
+            class="form-control form-control-sm mam-feed-search-input"
+            placeholder="Título, ubicación…"
+            [value]="data.busquedaFeed()"
+            (input)="onBusquedaFeedInput($event)"
+            autocomplete="off"
+          />
+        </div>
+      </div>
     </div>
+    @if (hayFiltrosActivos()) {
+      <div class="mt-2">
+        <button type="button" class="btn btn-sm btn-link p-0 text-danger" (click)="data.limpiarFiltrosFeed()">
+          Limpiar filtros
+        </button>
+      </div>
+    }
   </section>
+
   @if (data.cargando()) {
     <p class="text-muted" role="status">Cargando oportunidades…</p>
   } @else if (!oportunidadesFeedView().length) {
-    @if (data.busquedaFeed().trim()) {
-      <p class="text-muted">No hay oportunidades que coincidan con tu búsqueda.</p>
+    @if (hayFiltrosActivos()) {
+      <p class="text-muted">No hay oportunidades que coincidan con los filtros aplicados.</p>
     } @else {
       <p class="text-muted">No hay oportunidades activas o aún no hay datos.</p>
     }
@@ -55,20 +96,44 @@
                 {{ item.tipoActividadNombre }} · {{ item.oportunidad.disponibilidad }} · Cupos: {{ item.oportunidad.cupos }}
               </p>
             </div>
-            @if (item.puedePostularse) {
-              <button
-                type="button"
-                class="btn btn-sm mam-btn-primary mam-feed-postular-btn"
-                (click)="onPostular(item.oportunidad.id)"
-              >
-                Postularme
-              </button>
-            }
           </header>
-          <p class="mb-0 small flex-grow-1">{{ item.oportunidad.descripcion }}</p>
-          @if (auth.isLoggedIn() && item.yaPostulo) {
-            <p class="small text-primary fw-semibold mt-2 mb-0">Ya te has postulado a esta propuesta.</p>
+
+          <p class="mb-2 small">{{ item.oportunidad.descripcion }}</p>
+
+          @if (isExpanded(item.oportunidad.id)) {
+            <div class="mam-feed-expanded border-top pt-2 mt-1">
+              @if (item.oportunidad.fecha_actividad) {
+                <p class="small mb-1"><span class="fw-semibold">Fecha:</span> {{ item.oportunidad.fecha_actividad }}</p>
+              }
+              @if (item.oportunidad.requisitos) {
+                <p class="small mb-2"><span class="fw-semibold">Requisitos:</span> {{ item.oportunidad.requisitos }}</p>
+              }
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                @if (item.puedePostularse) {
+                  <button
+                    type="button"
+                    class="btn btn-sm mam-btn-primary"
+                    (click)="onPostular(item.oportunidad.id)"
+                  >
+                    Postularme
+                  </button>
+                }
+                @if (auth.isLoggedIn() && item.yaPostulo) {
+                  <p class="small text-primary fw-semibold mb-0">Ya te has postulado a esta propuesta.</p>
+                }
+              </div>
+            </div>
           }
+
+          <div class="mt-2">
+            <button
+              type="button"
+              class="btn btn-link btn-sm p-0 mam-feed-ver-mas-btn"
+              (click)="toggleExpanded(item.oportunidad.id)"
+            >
+              {{ isExpanded(item.oportunidad.id) ? 'Ver menos' : 'Ver más' }}
+            </button>
+          </div>
         </div>
       </div>
     </article>
