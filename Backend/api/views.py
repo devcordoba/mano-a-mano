@@ -97,6 +97,15 @@ class MeView(APIView):
     def get(self, request):
         return Response({"user": serializar_usuario_para_respuesta(request.user)})
 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        return Response(
+            {"detail": "Sesión cerrada correctamente."},
+            status=status.HTTP_200_OK,
+        )
+
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all().order_by("id")
     serializer_class = UserCreateSerializer
@@ -155,6 +164,7 @@ class TipoActividadViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class OportunidadVoluntariadoViewSet(
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
