@@ -2,13 +2,14 @@ from django.contrib.auth import authenticate, get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import mixins, status, viewsets
+from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .jwt_tokens import crear_token_usuario
+from .jwt_tokens import crear_token_usuario, invalidar_token
 from .models import (
     CausaVoluntariado,
     EstadoPostulacion,
@@ -28,6 +29,8 @@ from .permissions import (
 from .serializers import (
     CausaVoluntariadoSerializer,
     MensajeSerializer,
+    OportunidadVoluntariadoDetailSerializer,
+    OportunidadVoluntariadoListSerializer,
     OportunidadVoluntariadoSerializer,
     OrganizacionSerializer,
     PostulacionSerializer,
@@ -52,6 +55,31 @@ def serializar_usuario_para_respuesta(usuario):
         "last_name": usuario.last_name,
         "perfil": perfil,
     }
+
+
+def serializar_perfil_completo(usuario):
+    """Perfil extendido para ProfileActivity (email, perfil, organización)."""
+    datos = serializar_usuario_para_respuesta(usuario)
+    datos["email"] = usuario.email
+
+    try:
+        perfil_db = usuario.perfil
+        datos["perfil"] = {
+            "rol": perfil_db.rol,
+            "telefono": perfil_db.telefono,
+            "intereses_causas": perfil_db.intereses_causas,
+            "disponibilidad_resumen": perfil_db.disponibilidad_resumen,
+        }
+    except PerfilUsuario.DoesNotExist:
+        datos["perfil"] = None
+
+    organizacion = Organizacion.objects.filter(propietario=usuario).first()
+    if organizacion is not None:
+        datos["organizacion"] = OrganizacionSerializer(organizacion).data
+    else:
+        datos["organizacion"] = None
+
+    return datos
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -97,10 +125,19 @@ class MeView(APIView):
     def get(self, request):
         return Response({"user": serializar_usuario_para_respuesta(request.user)})
 
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({"user": serializar_perfil_completo(request.user)})
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        auth = get_authorization_header(request).split()
+        if len(auth) == 2 and auth[0].lower() == b"bearer":
+            invalidar_token(auth[1].decode())
         return Response(
             {"detail": "Sesión cerrada correctamente."},
             status=status.HTTP_200_OK,
@@ -181,6 +218,13 @@ class OportunidadVoluntariadoViewSet(
     permission_classes = [IsAuthenticatedOrReadOnly, IsOrganizacionOwner]
     parser_classes = [JSONParser, MultiPartParser]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return OportunidadVoluntariadoDetailSerializer
+        if self.action == "list" and not self.request.query_params.get("propietario"):
+            return OportunidadVoluntariadoListSerializer
+        return OportunidadVoluntariadoSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
