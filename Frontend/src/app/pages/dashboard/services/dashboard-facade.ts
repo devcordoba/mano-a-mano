@@ -7,11 +7,19 @@ import { mensajeErrorHttp } from '@shared/utils/http-error';
 import type {
   CatalogoItem,
   Mensaje,
+  OportunidadListItem,
   OportunidadVoluntariado,
   Organizacion,
   Postulacion,
   PostulacionBloqueOrganizador,
 } from '@shared/models/api-types';
+import {
+  idCatalogoOportunidad,
+  idOrganizacionOportunidad,
+  nombreOrganizacionOportunidad,
+  nombreTipoActividadOportunidad,
+  resumenOportunidad,
+} from '@shared/utils/oportunidad-api';
 
 @Injectable()
 export class DashboardFacade {
@@ -29,7 +37,7 @@ export class DashboardFacade {
   readonly #tiposActividadCatalogo = signal<CatalogoItem[]>([]);
   readonly #cargando = signal(false);
   readonly #error = signal<string | null>(null);
-  readonly #oportunidadesFeed = signal<OportunidadVoluntariado[]>([]);
+  readonly #oportunidadesFeed = signal<OportunidadListItem[]>([]);
   readonly #misPostulaciones = signal<Postulacion[]>([]);
   readonly #misOportunidades = signal<OportunidadVoluntariado[]>([]);
   readonly #postulacionesBloques = signal<PostulacionBloqueOrganizador[]>([]);
@@ -45,7 +53,7 @@ export class DashboardFacade {
   readonly tiposActividadCatalogo: Signal<CatalogoItem[]> = this.#tiposActividadCatalogo.asReadonly();
   readonly cargando: Signal<boolean> = this.#cargando.asReadonly();
   readonly error: Signal<string | null> = this.#error.asReadonly();
-  readonly oportunidadesFeed: Signal<OportunidadVoluntariado[]> = this.#oportunidadesFeed.asReadonly();
+  readonly oportunidadesFeed: Signal<OportunidadListItem[]> = this.#oportunidadesFeed.asReadonly();
   readonly misPostulaciones: Signal<Postulacion[]> = this.#misPostulaciones.asReadonly();
   readonly misOportunidades: Signal<OportunidadVoluntariado[]> = this.#misOportunidades.asReadonly();
   readonly postulacionesBloques: Signal<PostulacionBloqueOrganizador[]> =
@@ -55,23 +63,29 @@ export class DashboardFacade {
   readonly misOrganizaciones: Signal<Organizacion[]> = this.#misOrganizaciones.asReadonly();
   readonly idOrganizacionPublicar: Signal<number | null> = this.#idOrganizacionPublicar.asReadonly();
 
-  readonly oportunidadesFeedVisibles = computed((): OportunidadVoluntariado[] => {
+  readonly oportunidadesFeedVisibles = computed((): OportunidadListItem[] => {
     let feed = this.#oportunidadesFeed();
     const idsMisOrganizaciones = new Set(
       this.#misOrganizaciones().map((organizacion) => organizacion.id),
     );
     if (idsMisOrganizaciones.size > 0) {
-      feed = feed.filter((oportunidad) => !idsMisOrganizaciones.has(oportunidad.organizacion));
+      feed = feed.filter(
+        (oportunidad) => !idsMisOrganizaciones.has(idOrganizacionOportunidad(oportunidad)),
+      );
     }
 
     const causaId = this.#filtroCausa();
     if (causaId !== null) {
-      feed = feed.filter((oportunidad) => oportunidad.causa === causaId);
+      feed = feed.filter(
+        (oportunidad) => idCatalogoOportunidad(oportunidad.causa) === causaId,
+      );
     }
 
     const tipoId = this.#filtroTipoActividad();
     if (tipoId !== null) {
-      feed = feed.filter((oportunidad) => oportunidad.tipo_actividad === tipoId);
+      feed = feed.filter(
+        (oportunidad) => idCatalogoOportunidad(oportunidad.tipo_actividad) === tipoId,
+      );
     }
 
     const textoBusqueda = this.#busquedaFeed().trim();
@@ -242,7 +256,6 @@ export class DashboardFacade {
     };
 
     this.#misOportunidades.set(upsertEn(this.#misOportunidades()));
-    this.#oportunidadesFeed.set(upsertEn(this.#oportunidadesFeed()));
   }
 
   quitarOportunidad(id: number): void {
@@ -303,14 +316,14 @@ export class DashboardFacade {
     this.#idOrganizacionPublicar.set(null);
   }
 
-  #matcheaBusquedaFeed(oportunidad: OportunidadVoluntariado, texto: string): boolean {
+  #matcheaBusquedaFeed(oportunidad: OportunidadListItem, texto: string): boolean {
     const termino = texto.toLowerCase();
     const campos = [
       oportunidad.titulo,
-      oportunidad.descripcion,
+      resumenOportunidad(oportunidad),
       oportunidad.ubicacion,
-      oportunidad.organizacion_nombre,
-      oportunidad.tipo_actividad_nombre,
+      nombreOrganizacionOportunidad(oportunidad),
+      nombreTipoActividadOportunidad(oportunidad),
       oportunidad.disponibilidad,
     ];
     return campos.some(
@@ -318,8 +331,8 @@ export class DashboardFacade {
     );
   }
 
-  #filtrosFeed(): Partial<{ activa: string; q: string; propietario: string }> {
-    const filters: Partial<{ activa: string; q: string; propietario: string }> = { activa: 'true' };
+  #filtrosFeed(): Partial<{ activa: string; q: string }> {
+    const filters: Partial<{ activa: string; q: string }> = { activa: 'true' };
     const textoBusqueda = this.#busquedaFeed().trim();
     if (textoBusqueda !== '') {
       filters['q'] = textoBusqueda;
@@ -344,7 +357,7 @@ export class DashboardFacade {
       postulacionesVoluntario: esVoluntario
         ? this.#api.listPostulacionesVoluntario(idUsuario)
         : of<Postulacion[]>([]),
-      misOportunidades: this.#api.listOportunidades({ propietario: String(idUsuario) }),
+      misOportunidades: this.#api.listMisOportunidades(idUsuario),
       postulacionesBloques: this.#api.listPostulacionesBloquesOrganizador(),
     }).pipe(
       tap(
