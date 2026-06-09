@@ -67,6 +67,10 @@ export class ManoHttpClient {
     return this.#api.http.get<OportunidadVoluntariado[]>(`${this.#api.apiUrl}/oportunidades/`, { params });
   }
 
+  getOportunidad(id: number): Observable<OportunidadVoluntariado> {
+    return this.#api.http.get<OportunidadVoluntariado>(`${this.#api.apiUrl}/oportunidades/${id}/`);
+  }
+
   createOportunidad(
     body: Partial<OportunidadVoluntariado>,
     imagen?: File | null,
