@@ -61,21 +61,23 @@
       <input id="registro-apellido" class="form-control" [formControl]="form.controls.last_name" maxlength="150" />
     </div>
   </div>
-  @if (usarMamButton()) {
-    <app-mam-button type="submit" [disabled]="enviando()" extraClass="w-100">
-      @if (enviando()) {
-        Creando cuenta…
-      } @else {
-        Crear cuenta
-      }
-    </app-mam-button>
-  } @else {
-    <button type="submit" class="btn mam-btn-primary w-100 mt-2" [disabled]="enviando()">
-      @if (enviando()) {
-        Creando cuenta…
-      } @else {
-        Crear cuenta
-      }
-    </button>
-  }
+  <div class="d-flex justify-content-end">
+    @if (usarMamButton()) {
+      <app-mam-button type="submit" [disabled]="enviando()">
+        @if (enviando()) {
+          Creando cuenta…
+        } @else {
+          Crear cuenta
+        }
+      </app-mam-button>
+    } @else {
+      <button type="submit" class="btn mam-btn-primary mt-2" [disabled]="enviando()">
+        @if (enviando()) {
+          Creando cuenta…
+        } @else {
+          Crear cuenta
+        }
+      </button>
+    }
+  </div>
 </form>
