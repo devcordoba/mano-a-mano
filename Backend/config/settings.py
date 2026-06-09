@@ -122,3 +122,10 @@ CORS_ALLOWED_ORIGINS = _split_csv(
 JWT_ACCESS_LIFETIME_SECONDS = int(
     os.getenv("JWT_ACCESS_LIFETIME_SECONDS", str(60 * 60 * 24 * 14))
 )
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "mano-a-mano-jwt-blacklist",
+    }
+}
