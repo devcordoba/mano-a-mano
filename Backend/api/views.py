@@ -2,13 +2,14 @@ from django.contrib.auth import authenticate, get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import mixins, status, viewsets
+from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .jwt_tokens import crear_token_usuario
+from .jwt_tokens import crear_token_usuario, invalidar_token
 from .models import (
     CausaVoluntariado,
     EstadoPostulacion,
@@ -97,6 +98,18 @@ class MeView(APIView):
     def get(self, request):
         return Response({"user": serializar_usuario_para_respuesta(request.user)})
 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        auth = get_authorization_header(request).split()
+        if len(auth) == 2 and auth[0].lower() == b"bearer":
+            invalidar_token(auth[1].decode())
+        return Response(
+            {"detail": "Sesión cerrada correctamente."},
+            status=status.HTTP_200_OK,
+        )
+
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all().order_by("id")
     serializer_class = UserCreateSerializer
@@ -155,6 +168,7 @@ class TipoActividadViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class OportunidadVoluntariadoViewSet(
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,

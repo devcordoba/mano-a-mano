@@ -1,16 +1,47 @@
 <nav class="dashboard-nav" aria-label="Secciones del panel">
   <ul class="nav nav-pills flex-wrap gap-2 mam-pills">
     @for (item of items(); track item.id) {
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          [routerLink]="item.routerLink"
-          routerLinkActive="active"
-          [attr.id]="item.id + '-trigger'"
-        >
-          {{ item.label }}
-        </a>
-      </li>
+      @if (isNavGroup(item)) {
+        <li class="nav-item dropdown">
+          <button
+            type="button"
+            class="nav-link"
+            [class.active]="isGroupOpen(item.id)"
+            [attr.id]="item.id + '-trigger'"
+            [attr.aria-expanded]="isGroupOpen(item.id)"
+            (click)="toggleGroup(item.id)"
+          >
+            {{ item.label }}
+          </button>
+          @if (isGroupOpen(item.id)) {
+            <ul class="nav nav-pills flex-wrap gap-2 ms-2 mt-1">
+              @for (child of item.children; track child.id) {
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    [routerLink]="child.routerLink"
+                    routerLinkActive="active"
+                    [attr.id]="child.id + '-trigger'"
+                  >
+                    {{ child.label }}
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </li>
+      } @else {
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="item.routerLink"
+            routerLinkActive="active"
+            [attr.id]="item.id + '-trigger'"
+          >
+            {{ item.label }}
+          </a>
+        </li>
+      }
     }
   </ul>
 </nav>
