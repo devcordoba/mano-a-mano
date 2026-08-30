@@ -98,15 +98,12 @@
             </div>
           </header>
 
-          <p class="mb-2 small">{{ item.oportunidad.descripcion }}</p>
+          <p class="mb-2 small">{{ item.resumen }}</p>
 
           @if (isExpanded(item.oportunidad.id)) {
             <div class="mam-feed-expanded border-top pt-2 mt-1">
               @if (item.oportunidad.fecha_actividad) {
-                <p class="small mb-1"><span class="fw-semibold">Fecha:</span> {{ item.oportunidad.fecha_actividad }}</p>
-              }
-              @if (item.oportunidad.requisitos) {
-                <p class="small mb-2"><span class="fw-semibold">Requisitos:</span> {{ item.oportunidad.requisitos }}</p>
+                <p class="small mb-2"><span class="fw-semibold">Fecha:</span> {{ item.oportunidad.fecha_actividad }}</p>
               }
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 @if (item.puedePostularse) {
