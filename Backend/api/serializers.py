@@ -85,6 +85,90 @@ class TipoActividadSerializer(serializers.ModelSerializer):
         fields = ("id", "nombre")
 
 
+def build_oportunidad_imagen_url(request, oportunidad) -> str | None:
+    if not oportunidad.tiene_imagen:
+        return None
+    if request is None:
+        return f"/api/oportunidades/{oportunidad.pk}/imagen/"
+    url = request.build_absolute_uri(f"/api/oportunidades/{oportunidad.pk}/imagen/")
+    if oportunidad.updated_at:
+        url = f"{url}?v={int(oportunidad.updated_at.timestamp())}"
+    return url
+
+
+class OportunidadVoluntariadoListSerializer(serializers.ModelSerializer):
+    """Listado público resumido (feed / HomeActivity)."""
+
+    organizacion = serializers.SerializerMethodField()
+    causa = CausaVoluntariadoSerializer(read_only=True)
+    tipo_actividad = TipoActividadSerializer(read_only=True)
+    imagen_url = serializers.SerializerMethodField()
+    resumen = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OportunidadVoluntariado
+        fields = (
+            "id",
+            "titulo",
+            "ubicacion",
+            "organizacion",
+            "causa",
+            "tipo_actividad",
+            "disponibilidad",
+            "cupos",
+            "fecha_actividad",
+            "activa",
+            "imagen_url",
+            "resumen",
+        )
+
+    def get_organizacion(self, obj):
+        return {
+            "id": obj.organizacion_id,
+            "nombre": obj.organizacion.nombre_publico,
+        }
+
+    def get_imagen_url(self, obj):
+        return build_oportunidad_imagen_url(self.context.get("request"), obj)
+
+    def get_resumen(self, obj):
+        texto = (obj.descripcion or "").strip()
+        if len(texto) <= 120:
+            return texto
+        return f"{texto[:120].rstrip()}…"
+
+
+class OportunidadVoluntariadoDetailSerializer(serializers.ModelSerializer):
+    """Detalle con relaciones anidadas e imagen (DetailActivity)."""
+
+    causa = CausaVoluntariadoSerializer(read_only=True)
+    tipo_actividad = TipoActividadSerializer(read_only=True)
+    organizacion = OrganizacionSerializer(read_only=True)
+    imagen_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OportunidadVoluntariado
+        fields = (
+            "id",
+            "titulo",
+            "descripcion",
+            "ubicacion",
+            "disponibilidad",
+            "requisitos",
+            "cupos",
+            "fecha_actividad",
+            "activa",
+            "causa",
+            "tipo_actividad",
+            "organizacion",
+            "imagen_url",
+            "updated_at",
+        )
+
+    def get_imagen_url(self, obj):
+        return build_oportunidad_imagen_url(self.context.get("request"), obj)
+
+
 class OportunidadVoluntariadoSerializer(serializers.ModelSerializer):
     organizacion_nombre = serializers.CharField(
         source="organizacion.nombre_publico", read_only=True
