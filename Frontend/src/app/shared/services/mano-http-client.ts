@@ -8,8 +8,11 @@ import type {
   CatalogoItem,
   Mensaje,
   MensajeAlta,
+  OportunidadDetalle,
+  OportunidadListItem,
   OportunidadVoluntariado,
   Organizacion,
+  PerfilResponse,
   Postulacion,
   PostulacionBloqueOrganizador,
   UsuarioAlta,
@@ -50,14 +53,13 @@ export class ManoHttpClient {
   }
 
   listOportunidades(
-    filtros?: Partial<{ activa: string; q: string; propietario: string }>,
-  ): Observable<OportunidadVoluntariado[]> {
+    filtros?: Partial<{ activa: string; q: string }>,
+  ): Observable<OportunidadListItem[]> {
     let params = new HttpParams();
     if (filtros) {
       const entradas: [keyof typeof filtros, string | undefined][] = [
         ['activa', filtros.activa],
         ['q', filtros.q],
-        ['propietario', filtros.propietario],
       ];
       for (const [clave, valor] of entradas) {
         if (valor !== null && valor !== undefined && valor !== '') {
@@ -65,11 +67,26 @@ export class ManoHttpClient {
         }
       }
     }
-    return this.#api.http.get<OportunidadVoluntariado[]>(`${this.#api.apiUrl}/oportunidades/`, { params });
+    return this.#api.http.get<OportunidadListItem[]>(
+      `${this.#api.apiUrl}/oportunidades/`,
+      { params },
+    );
   }
 
-  getOportunidad(id: number): Observable<OportunidadVoluntariado> {
-    return this.#api.http.get<OportunidadVoluntariado>(`${this.#api.apiUrl}/oportunidades/${id}/`);
+  listMisOportunidades(propietarioId: number): Observable<OportunidadVoluntariado[]> {
+    const params = new HttpParams().set('propietario', String(propietarioId));
+    return this.#api.http.get<OportunidadVoluntariado[]>(
+      `${this.#api.apiUrl}/oportunidades/`,
+      { params },
+    );
+  }
+
+  getOportunidad(id: number): Observable<OportunidadDetalle> {
+    return this.#api.http.get<OportunidadDetalle>(`${this.#api.apiUrl}/oportunidades/${id}/`);
+  }
+
+  getPerfil(): Observable<PerfilResponse> {
+    return this.#api.http.get<PerfilResponse>(`${this.#api.apiUrl}/auth/perfil/`);
   }
 
   createOportunidad(
