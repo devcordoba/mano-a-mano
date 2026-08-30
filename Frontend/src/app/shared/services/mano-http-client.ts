@@ -13,14 +13,15 @@ import type {
   Postulacion,
   PostulacionBloqueOrganizador,
   UsuarioAlta,
+  UsuarioCreado,
 } from '@shared/models/api-types';
 
 @Injectable({ providedIn: 'root' })
 export class ManoHttpClient {
   readonly #api = inject(ApiConfig);
 
-  createUsuario(body: UsuarioAlta): Observable<void> {
-    return this.#api.http.post<void>(`${this.#api.apiUrl}/usuarios/`, body);
+  createUsuario(body: UsuarioAlta): Observable<UsuarioCreado> {
+    return this.#api.http.post<UsuarioCreado>(`${this.#api.apiUrl}/usuarios/`, body);
   }
 
   listOrganizaciones(propietarioId: number): Observable<Organizacion[]> {

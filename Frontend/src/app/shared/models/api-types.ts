@@ -29,6 +29,14 @@ export interface UsuarioAlta {
   last_name?: string;
 }
 
+/** Respuesta 201 de POST /api/usuarios/ (sin password). */
+export interface UsuarioCreado {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
 export interface Organizacion {
   id: number;
   nombre_publico: string;
