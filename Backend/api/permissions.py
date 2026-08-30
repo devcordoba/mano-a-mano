@@ -17,6 +17,8 @@ class IsOwner(BasePermission):
 
 class IsOrganizacionOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
         if hasattr(obj, "organizacion"):
             organizacion = obj.organizacion
         else:

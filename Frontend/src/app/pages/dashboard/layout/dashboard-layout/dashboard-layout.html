@@ -1,8 +1,10 @@
 <section class="dashboard-layout">
   @if (showSidebar()) {
-    <app-dashboard-nav [items]="navItems()" class="dashboard-layout__nav" />
+    <aside class="dashboard-layout__sidebar">
+      <app-dashboard-nav [items]="navItems()" />
+    </aside>
   }
-  <section class="dashboard-layout__content">
+  <section class="dashboard-layout__main">
     <ng-content />
   </section>
 </section>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { AuthService } from '@core/auth/auth';
 import { ApiConfig } from '@core/http/api-config';
 import type { OportunidadVoluntariado } from '@shared/models/api-types';
@@ -28,6 +28,30 @@ export class DashboardFeedTab {
   protected readonly auth = inject(AuthService);
   readonly #apiConfig = inject(ApiConfig);
 
+  protected readonly hayFiltrosActivos = computed(() =>
+    this.data.filtroCausa() !== null ||
+    this.data.filtroTipoActividad() !== null ||
+    this.data.busquedaFeed().trim() !== ''
+  );
+
+  readonly #expandedIds = signal<Set<number>>(new Set());
+
+  protected isExpanded(id: number): boolean {
+    return this.#expandedIds().has(id);
+  }
+
+  protected toggleExpanded(id: number): void {
+    this.#expandedIds.update((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
   protected readonly oportunidadesFeedView = computed((): OportunidadFeedView[] => {
     const feed = this.data.oportunidadesFeedVisibles();
 
@@ -51,6 +75,22 @@ export class DashboardFeedTab {
       return;
     }
     this.data.setBusquedaFeed(input.value);
+  }
+
+  protected onFiltroCausa(event: Event): void {
+    const select = event.target;
+    if (!(select instanceof HTMLSelectElement)) {
+      return;
+    }
+    this.data.setFiltroCausa(select.value === '' ? null : Number(select.value));
+  }
+
+  protected onFiltroTipoActividad(event: Event): void {
+    const select = event.target;
+    if (!(select instanceof HTMLSelectElement)) {
+      return;
+    }
+    this.data.setFiltroTipoActividad(select.value === '' ? null : Number(select.value));
   }
 
   protected onPostular(oportunidadId: number): void {
