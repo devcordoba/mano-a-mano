@@ -13,6 +13,7 @@ from .jwt_tokens import crear_token_usuario, invalidar_token
 from .models import (
     CausaVoluntariado,
     EstadoPostulacion,
+    FormularioContacto,
     Mensaje,
     OportunidadVoluntariado,
     Organizacion,
@@ -28,11 +29,13 @@ from .permissions import (
 )
 from .serializers import (
     CausaVoluntariadoSerializer,
+    FormularioContactoSerializer,
     MensajeSerializer,
     OportunidadVoluntariadoDetailSerializer,
     OportunidadVoluntariadoListSerializer,
     OportunidadVoluntariadoSerializer,
     OrganizacionSerializer,
+    PerfilActualizacionSerializer,
     PostulacionSerializer,
     TipoActividadSerializer,
     UserCreateSerializer,
@@ -102,7 +105,7 @@ class LoginView(APIView):
         )
         if usuario is None:
             return Response(
-                {"detail": "Credenciales inválidas."},
+                {"detail": "Usuario y/o contraseña incorrecta."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         if not usuario.is_active:
@@ -130,6 +133,48 @@ class ProfileView(APIView):
 
     def get(self, request):
         return Response({"user": serializar_perfil_completo(request.user)})
+
+    def patch(self, request):
+        serializer = PerfilActualizacionSerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.actualizar(request.user)
+        request.user.refresh_from_db()
+        return Response({"user": serializar_perfil_completo(request.user)})
+
+    def delete(self, request):
+        usuario = request.user
+        enviadas = Postulacion.objects.filter(voluntario=usuario).count()
+        recibidas = Postulacion.objects.filter(
+            oportunidad__organizacion__propietario=usuario
+        ).count()
+        oportunidades = OportunidadVoluntariado.objects.filter(
+            organizacion__propietario=usuario
+        ).count()
+        organizaciones = Organizacion.objects.filter(propietario=usuario).count()
+        mensajes = Mensaje.objects.filter(
+            Q(remitente=usuario) | Q(destinatario=usuario)
+        ).count()
+
+        auth = get_authorization_header(request).split()
+        usuario.delete()
+        if len(auth) == 2 and auth[0].lower() == b"bearer":
+            invalidar_token(auth[1].decode())
+
+        return Response(
+            {
+                "detail": "Cuenta eliminada.",
+                "eliminado": {
+                    "postulaciones_enviadas": enviadas,
+                    "postulaciones_recibidas": recibidas,
+                    "oportunidades": oportunidades,
+                    "organizaciones": organizaciones,
+                    "mensajes": mensajes,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -412,3 +457,18 @@ class MensajeViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class FormularioContactoViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = FormularioContacto.objects.all()
+    serializer_class = FormularioContactoSerializer
+    http_method_names = ["get", "post", "head", "options"]
+
+    def get_permissions(self):
+        if self.action == "create":
+            return [AllowAny()]
+        return [IsAuthenticated()]

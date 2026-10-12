@@ -240,3 +240,20 @@ class Mensaje(models.Model):
 
     def __str__(self):
         return f"Mensaje {self.remitente_id} → {self.destinatario_id}"
+
+
+class FormularioContacto(models.Model):
+    nombre = models.CharField(max_length=120)
+    email = models.EmailField()
+    asunto = models.CharField(max_length=160)
+    mensaje = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "formulario_contacto"
+        ordering = ("-created_at",)
+        verbose_name = "Formulario de contacto"
+        verbose_name_plural = "Formularios de contacto"
+
+    def __str__(self):
+        return f"{self.asunto} ({self.email})"

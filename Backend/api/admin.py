@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     CausaVoluntariado,
+    FormularioContacto,
     Mensaje,
     OportunidadVoluntariado,
     Organizacion,
@@ -63,3 +64,10 @@ class PostulacionAdmin(admin.ModelAdmin):
 class MensajeAdmin(admin.ModelAdmin):
     list_display = ("id", "remitente", "destinatario", "oportunidad", "created_at")
     search_fields = ("cuerpo",)
+
+
+@admin.register(FormularioContacto)
+class FormularioContactoAdmin(admin.ModelAdmin):
+    list_display = ("id", "nombre", "email", "asunto", "created_at")
+    search_fields = ("nombre", "email", "asunto", "mensaje")
+    readonly_fields = ("created_at",)

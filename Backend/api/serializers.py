@@ -8,9 +8,11 @@ from .password_validation import validate_password_strength
 from .models import (
     CausaVoluntariado,
     EstadoPostulacion,
+    FormularioContacto,
     Mensaje,
     OportunidadVoluntariado,
     Organizacion,
+    PerfilUsuario,
     Postulacion,
     TipoActividad,
 )
@@ -49,6 +51,64 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class PerfilActualizacionSerializer(serializers.Serializer):
+    first_name = serializers.CharField(required=False, allow_blank=True, max_length=150)
+    last_name = serializers.CharField(required=False, allow_blank=True, max_length=150)
+    email = serializers.EmailField(required=False)
+    telefono = serializers.CharField(required=False, allow_blank=True, max_length=40)
+    intereses_causas = serializers.CharField(required=False, allow_blank=True, max_length=255)
+    disponibilidad_resumen = serializers.CharField(
+        required=False, allow_blank=True, max_length=255
+    )
+    password = serializers.CharField(required=False, write_only=True, max_length=128)
+    password_actual = serializers.CharField(required=False, write_only=True, max_length=128)
+
+    def validate(self, attrs):
+        prohibidos = [campo for campo in ("username", "rol") if campo in self.initial_data]
+        if prohibidos:
+            raise serializers.ValidationError(
+                "El usuario y el rol no se pueden modificar."
+            )
+
+        password = attrs.get("password")
+        if password is None:
+            return attrs
+
+        try:
+            attrs["password"] = validate_password_strength(password)
+        except ValueError as exc:
+            raise serializers.ValidationError({"password": str(exc)}) from exc
+
+        actual = attrs.get("password_actual")
+        if not actual:
+            raise serializers.ValidationError(
+                {"password_actual": "Para cambiar la contraseña indicá la actual."}
+            )
+
+        usuario = self.context["request"].user
+        if not usuario.check_password(actual):
+            raise serializers.ValidationError(
+                {"password_actual": "La contraseña actual no es correcta."}
+            )
+        return attrs
+
+    def actualizar(self, usuario):
+        datos = self.validated_data
+        for campo in ("first_name", "last_name", "email"):
+            if campo in datos:
+                setattr(usuario, campo, str(datos[campo]).strip())
+        if "password" in datos:
+            usuario.set_password(datos["password"])
+        usuario.save()
+
+        perfil, _creado = PerfilUsuario.objects.get_or_create(user=usuario)
+        for campo in ("telefono", "intereses_causas", "disponibilidad_resumen"):
+            if campo in datos:
+                setattr(perfil, campo, str(datos[campo]).strip())
+        perfil.save()
+        return usuario
 
 
 class OrganizacionSerializer(serializers.ModelSerializer):
@@ -476,3 +536,31 @@ class MensajeSerializer(serializers.ModelSerializer):
                     )
 
         return attrs
+
+
+class FormularioContactoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormularioContacto
+        fields = ("id", "nombre", "email", "asunto", "mensaje", "created_at")
+        read_only_fields = ("id", "created_at")
+
+    def validate_nombre(self, value):
+        texto = _texto_obligatorio(value, "El nombre es obligatorio.")
+        if len(texto) < 3:
+            raise serializers.ValidationError("El nombre debe tener al menos 3 caracteres.")
+        return texto
+
+    def validate_email(self, value):
+        return _texto_obligatorio(value, "El correo electrónico es obligatorio.")
+
+    def validate_asunto(self, value):
+        texto = _texto_obligatorio(value, "El asunto es obligatorio.")
+        if len(texto) < 5:
+            raise serializers.ValidationError("El asunto debe tener al menos 5 caracteres.")
+        return texto
+
+    def validate_mensaje(self, value):
+        texto = _texto_obligatorio(value, "El mensaje es obligatorio.")
+        if len(texto) < 10:
+            raise serializers.ValidationError("El mensaje debe tener al menos 10 caracteres.")
+        return texto
