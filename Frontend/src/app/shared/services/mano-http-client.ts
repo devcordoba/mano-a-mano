@@ -6,6 +6,8 @@ import { ApiConfig } from '@core/http/api-config';
 import type {
   BandejaMensajes,
   CatalogoItem,
+  FormularioContacto,
+  FormularioContactoAlta,
   Mensaje,
   MensajeAlta,
   OportunidadDetalle,
@@ -196,5 +198,13 @@ export class ManoHttpClient {
 
   createMensaje(body: MensajeAlta): Observable<Mensaje> {
     return this.#api.http.post<Mensaje>(`${this.#api.apiUrl}/mensajes/`, body);
+  }
+
+  crearContacto(body: FormularioContactoAlta): Observable<FormularioContacto> {
+    return this.#api.http.post<FormularioContacto>(`${this.#api.apiUrl}/contactos/`, body);
+  }
+
+  listarContactos(): Observable<FormularioContacto[]> {
+    return this.#api.http.get<FormularioContacto[]>(`${this.#api.apiUrl}/contactos/`);
   }
 }

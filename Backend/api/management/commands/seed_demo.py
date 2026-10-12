@@ -21,7 +21,7 @@ from api.utilidades import texto_opcional, valor_dict
 
 User = get_user_model()
 
-DEMO_PASSWORD = "demo12345"
+DEMO_PASSWORD = "Mano2026!"
 
 ORGANIZACIONES = [
     {
@@ -585,16 +585,12 @@ class Command(BaseCommand):
                 "last_name": last_name,
             },
         )
-        if created:
-            user.set_password(DEMO_PASSWORD)
-            user.save()
-        else:
+        if not created:
             user.email = email
             user.first_name = first_name
             user.last_name = last_name
-            if not user.has_usable_password():
-                user.set_password(DEMO_PASSWORD)
-            user.save()
+        user.set_password(DEMO_PASSWORD)
+        user.save()
         return user
 
     def _ensure_perfil(self, user, rol, intereses, disponibilidad, telefono=""):
