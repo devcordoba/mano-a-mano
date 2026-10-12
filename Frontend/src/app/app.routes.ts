@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('app/pages/nosotros/quienes-somos-page').then((m) => m.QuienesSomosPage),
   },
   {
+    path: 'contacto',
+    title: 'Contacto - Mano a Mano',
+    loadComponent: () => import('app/pages/contacto/contacto-page').then((m) => m.ContactoPage),
+  },
+  {
     path: 'login',
     title: 'Iniciar sesión - Mano a Mano',
     canActivate: [guestGuard],

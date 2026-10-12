@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { dashboardAuthChildGuard } from '@core/guards/auth-guards';
+import { DashboardConsultasTab } from './consultas/dashboard-consultas-tab';
 import { DashboardFeedTab } from './feed/dashboard-feed-tab';
 import { DashboardMensajesTab } from './mensajes/dashboard-mensajes-tab';
 import { DashboardOrganizacionesTab } from './organizaciones/dashboard-organizaciones-tab';
@@ -25,6 +26,7 @@ export const dashboardRoutes: Routes = [
       { path: 'publicaciones', component: DashboardPublicacionesTab },
       { path: 'postulantes', component: DashboardPostulantesTab },
       { path: 'mensajes', component: DashboardMensajesTab },
+      { path: 'consultas', component: DashboardConsultasTab },
       { path: 'mis-organizaciones', component: DashboardOrganizacionesTab },
       { path: 'publicar', component: DashboardPublicarTab },
     ],

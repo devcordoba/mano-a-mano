@@ -51,6 +51,7 @@ export class DashboardPage {
       ],
     },
     { id: 'dashboard-tab-mensajes', label: 'Mensajes', routerLink: '/panel/mensajes' },
+    { id: 'dashboard-tab-consultas', label: 'Consultas', routerLink: '/panel/consultas' },
   ];
 
   constructor() {

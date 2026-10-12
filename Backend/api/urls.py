@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     CausaVoluntariadoViewSet,
+    FormularioContactoViewSet,
     LoginView,
     LogoutView,
     MeView,
@@ -23,6 +24,7 @@ router.register(r"tipos-actividad", TipoActividadViewSet, basename="tipo-activid
 router.register(r"oportunidades", OportunidadVoluntariadoViewSet, basename="oportunidad-voluntariado")
 router.register(r"postulaciones", PostulacionViewSet, basename="postulacion")
 router.register(r"mensajes", MensajeViewSet, basename="mensaje")
+router.register(r"contactos", FormularioContactoViewSet, basename="contacto")
 
 urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="auth-login"),

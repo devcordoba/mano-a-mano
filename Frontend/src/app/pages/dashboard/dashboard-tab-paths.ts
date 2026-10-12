@@ -4,6 +4,7 @@ const PANEL_TAB_SLUGS = [
   'publicaciones',
   'postulantes',
   'mensajes',
+  'consultas',
   'mis-organizaciones',
   'publicar',
 ] as const;

@@ -170,3 +170,15 @@ export interface BandejaMensajes {
   recibidos: Mensaje[];
   enviados: Mensaje[];
 }
+
+export interface FormularioContactoAlta {
+  nombre: string;
+  email: string;
+  asunto: string;
+  mensaje: string;
+}
+
+export interface FormularioContacto extends FormularioContactoAlta {
+  id: number;
+  created_at: string;
+}
